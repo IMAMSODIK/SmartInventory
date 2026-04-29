@@ -19,21 +19,26 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'password' => bcrypt('12345'),
             'email' => 'admin@gmail.com',
-            'role' => 'admin'
+            'role' => 'admin',
+            'status' => 1
         ]);
 
         User::create([
-            'name' => 'Kasir 1',
+            'name' => 'pedagang 1',
             'password' => bcrypt('12345'),
-            'email' => 'kasir1@gmail.com',
-            'role' => 'kasir'
+            'email' => 'pedagang@gmail.com',
+            'role' => 'pedagang'
         ]);
 
         User::create([
-            'name' => 'Kasir 2',
+            'name' => 'pedagang 2',
             'password' => bcrypt('12345'),
-            'email' => 'kasir2@gmail.com',
-            'role' => 'kasir'
+            'email' => 'pedagang2@gmail.com',
+            'role' => 'pedagang'
+        ]);
+
+        $this->call([
+            KategoriSeeder::class,
         ]);
     }
 }

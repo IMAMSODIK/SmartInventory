@@ -5,32 +5,33 @@ function loadMenu() {
         kategori.push($(this).val());
     });
 
-    let is_ready = $('input[name="filter_ready"]:checked').val();
-    let status = $('input[name="filter_status"]:checked').val();
+    // let is_ready = $('input[name="filter_ready"]:checked').val();
+    // let status = $('input[name="filter_status"]:checked').val();
     let search = $('#search-menu').val();
 
     showSkeleton();
 
     $.ajax({
-        url: '/daftar-menu/data',
+        url: '/daftar-produk/data',
         type: 'GET',
         data: {
-            status: status,
             kategori: kategori,
-            is_ready: is_ready,
             search: search
         },
         success: function (res) {
-
             let container = $('#menu-container');
             container.hide().html('');
 
-            if (res.data.length === 0) {
-                container.html('<p class="text-center">Data tidak ditemukan</p>');
-            } else {
-                res.data.forEach(menu => {
-                    container.append(generateMenuCard(menu));
-                });
+            if(!res.check_profile){
+                container.html('<p class="text-center">Silahkan Update Profile Usaha</p><br><a href="/profile-usaha" class="btn btn-success">Update Profile Usaha</button>');
+            }else{
+                if (res.data.length === 0) {
+                    container.html('<p class="text-center">Data tidak ditemukan</p>');
+                } else {
+                    res.data.forEach(menu => {
+                        container.append(generateMenuCard(menu));
+                    });
+                }
             }
 
             container.fadeIn(300);
@@ -50,18 +51,18 @@ function renderMenu(data) {
     data.forEach(menu => {
         let img = '/storage/default.png';
 
-        if (menu.foto_menus && menu.foto_menus.length > 0) {
-            img = '/storage/' + menu.foto_menus[0].foto_path;
+        if (menu.foto_produk && menu.foto_produk.length > 0) {
+            img = '/storage/' + menu.foto_produk[0].image;
         }
 
         let html = `
-            <div class="col-xl-3 col-sm-6">
+            <div class="col-xl-3 col-sm-6 produk-item" data-id="${menu.id}">
                 <div class="card">
                     <div class="product-box">
 
                         <div class="product-img">
                             <div class="ribbon ribbon-success ribbon-right">
-                                ${menu.kategori_menu.nama_kategori}
+                                ${menu.kategori.nama_kategori}
                             </div>
                             <img class="img-fluid" src="${img}">
                             
@@ -82,21 +83,13 @@ function renderMenu(data) {
                         </div>
 
                         <div class="product-details">
-                            <h4>${menu.nama_menu}</h4>
+                            <h4>${menu.name}</h4>
                             <p>${menu.deskripsi ?? ''}</p>
 
                             <div class="row align-items-center">
                                 <div class="col-9">
                                     <div class="product-price">
-                                        Rp ${formatRupiah(menu.harga)}
-                                    </div>
-                                </div>
-                                <div class="col-3 d-flex justify-content-end">
-                                    <div class="form-check form-switch m-0">
-                                        <input class="form-check-input switch-ready" 
-                                            type="checkbox" 
-                                            data-id="${menu.id}" 
-                                            ${menu.is_ready ? 'checked' : ''}>
+                                        Rp ${formatRupiah(menu.price)}
                                     </div>
                                 </div>
                             </div>
@@ -116,18 +109,18 @@ function generateMenuCard(menu) {
 
     let img = '/storage/default.png';
 
-    if (menu.foto_menus && menu.foto_menus.length > 0) {
-        img = '/storage/' + menu.foto_menus[0].foto_path;
+    if (menu.foto_produk && menu.foto_produk.length > 0) {
+        img = '/storage/' + menu.foto_produk[0].image;
     }
 
     return `
-    <div class="col-xl-3 col-sm-6">
-        <div class="card ${menu.is_ready == 1 ? '' : 'opacity-50'}">
+    <div class="col-xl-3 col-sm-6 produk-item" data-id="${menu.id}">
+        <div class="card">
             <div class="product-box">
 
                 <div class="product-img">
                     <div class="ribbon ribbon-success ribbon-right">
-                        ${menu.kategori_menu?.nama_kategori ?? ''}
+                        ${menu.kategori?.nama_kategori ?? ''}
                     </div>
                     <img class="img-fluid" src="${img}">
                     
@@ -148,21 +141,13 @@ function generateMenuCard(menu) {
                 </div>
 
                 <div class="product-details">
-                    <h4>${menu.nama_menu}</h4>
+                    <h4>${menu.name}</h4>
                     <p>${menu.deskripsi ?? ''}</p>
 
                     <div class="row">
                         <div class="col-9">
                             <div class="product-price">
-                                Rp ${formatRupiah(menu.harga)}
-                            </div>
-                        </div>
-                        <div class="col-3 d-flex justify-content-end radius-none">
-                            <div class="form-check product-price form-switch m-0">
-                                <input class="form-check-input switch-ready" 
-                                    type="checkbox" 
-                                    data-id="${menu.id}" 
-                                    ${menu.is_ready ? 'checked' : ''}>
+                                Rp ${formatRupiah(menu.price)}
                             </div>
                         </div>
                     </div>

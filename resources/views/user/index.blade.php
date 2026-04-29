@@ -39,7 +39,7 @@
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail">
-                        Arsip Terhapus
+                        Aktivasi User
                     </button>
                 </li>
             </ul>
@@ -147,9 +147,9 @@
                         <div class="mb-3">
                             <label>Role (Wajib dipilih)</label>
                             <select name="role" id="role" class="form-control">
-                                <option value="kasir">Kasir</option>
-                                <option value="waiter">Waiter</option>
-                                <option value="kitchen">Kitchen</option>
+                                <option value="kurir">Kurir</option>
+                                <option value="pembeli">Pembeli</option>
+                                <option value="penjual">Penjual</option>
                             </select>
                             <small class="text-danger error-role"></small>
                         </div>
@@ -201,9 +201,9 @@
                         <div class="mb-3">
                             <label>Role</label>
                             <select name="role" id="edit_role" class="form-control">
-                                <option value="kasir">Kasir</option>
-                                <option value="waiter">Waiter</option>
-                                <option value="kitchen">Kitchen</option>
+                                <option value="kurir">Kurir</option>
+                                <option value="pedagang">Pedagang</option>
+                                <option value="penjual">Penjual</option>
                             </select>
                             <small class="text-danger error-role"></small>
                         </div>
@@ -218,8 +218,138 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalDetail" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formEdit">
+                    <input type="hidden" name="id" id="edit_id">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detail User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Profile User</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label>Nama</label>
+                                    <input type="text" name="name" id="detail_name" class="form-control" readonly>
+                                    <small class="text-danger error-name"></small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Email</label>
+                                    <input type="email" name="email" id="detail_email" class="form-control"
+                                        readonly>
+                                    <small class="text-danger error-email"></small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Foto</label>
+                                    <div class="mt-2">
+                                        <img id="preview-detail_foto" style="max-width:150px; border-radius:8px;">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Role</label>
+                                    <input type="email" name="email" id="detail_role" class="form-control" readonly>
+                                    <small class="text-danger error-role"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card detail-usaha">
+                            <div class="card-header">
+                                <h3>Profile Usaha</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label>Nama Usaha</label>
+                                    <input type="text" name="name" id="nama_usaha" class="form-control" readonly>
+                                    <small class="text-danger error-name"></small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Deksripsi</label>
+                                    <textarea name="deskripsi_usaha" id="deskripsi_usaha" class="form-control" readonly cols="30" rows="3"></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Logo Usaha</label>
+                                    <div class="mt-2">
+                                        <img id="preview-logo_usaha" style="max-width:150px; border-radius:8px;">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Lokasi Usaha</label>
+
+                                    <div id="map-detail" style="height:250px; border-radius:10px;"></div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <input type="text" id="detail_latitude" class="form-control" readonly
+                                                placeholder="Latitude">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" id="detail_longitude" class="form-control" readonly
+                                                placeholder="Longitude">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card detail-driver">
+                            <div class="card-header">
+                                <h3>Profile Driver</h3>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label>Jenis Kendaraan</label>
+                                    <input type="text" id="driver_vehicle" class="form-control" readonly>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Nomor Plat</label>
+                                    <input type="text" id="driver_plate" class="form-control" readonly>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Rating</label>
+                                    <input type="text" id="driver_rating" class="form-control" readonly>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Total Pengantaran</label>
+                                    <input type="text" id="driver_total" class="form-control" readonly>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="verif-button">Verifikasi</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('own_script')
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="{{ asset('own_assets/scripts/user.js') }}"></script>
 @endsection

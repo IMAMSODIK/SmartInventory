@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('produks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('kategori_id');
             $table->foreignId('profile_usaha_id')->constrained()->cascadeOnDelete();
 
             $table->string('name');
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->string('unit')->nullable(); // kg, ton, liter
 
             $table->boolean('is_approved')->default(false); // QC admin
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

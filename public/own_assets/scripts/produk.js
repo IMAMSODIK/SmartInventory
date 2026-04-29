@@ -19,7 +19,7 @@ $(".refresh-data").on("click", function () {
     }
 });
 
-$('#harga').on('keyup', function () {
+$('#price').on('keyup', function () {
     let cursorPos = this.selectionStart;
     let value = this.value.replace(/[^0-9]/g, '');
 
@@ -32,7 +32,7 @@ $('#harga').on('keyup', function () {
     this.setSelectionRange(this.value.length, this.value.length);
 });
 
-$('#edit_harga').on('keyup', function () {
+$('#edit_price').on('keyup', function () {
     let cursorPos = this.selectionStart;
     let value = this.value.replace(/[^0-9]/g, '');
 
@@ -45,7 +45,7 @@ $('#edit_harga').on('keyup', function () {
     this.setSelectionRange(this.value.length, this.value.length);
 });
 
-$('#foto_menu').on('change', function () {
+$('#foto_produk').on('change', function () {
     let preview = $('#preview-container');
     preview.html(''); // reset preview
 
@@ -74,7 +74,7 @@ $('#foto_menu').on('change', function () {
     });
 });
 
-$('#edit_foto_menu').on('change', function () {
+$('#edit_foto_produk').on('change', function () {
     let preview = $('#edit-preview-container');
     preview.html('');
 
@@ -115,22 +115,17 @@ $('#formCreate').submit(function (e) {
     e.preventDefault();
     $('.text-danger').text('');
 
-    let namaMenu = $('input[name="nama_menu"]').val();
-    if (!namaMenu) {
-        alertResult('warning', 'Validasi', 'Nama menu wajib diisi');
-        return;
-    }
-
     let form = document.getElementById('formCreate');
     let formData = new FormData(form);
-    let harga = $('#harga').val().replace(/[^0-9]/g, '');
+
+    let price = $('#price').val().replace(/[^0-9]/g, '');
     let token = $('meta[name="csrf-token"]').attr('content');
 
     formData.append('_token', token);
-    formData.append('harga', harga);
+    formData.append('price', price);
 
     $.ajax({
-        url: '/daftar-menu/store',
+        url: '/daftar-produk/store',
         type: 'POST',
         data: formData,
         processData: false,
@@ -140,7 +135,6 @@ $('#formCreate').submit(function (e) {
 
                 $('#modalCreate').modal('hide');
                 $('#formCreate')[0].reset();
-                $('#preview-container').html('');
                 $('#preview-container').html('');
 
                 let newCard = $(generateMenuCard(res.data)).hide();
@@ -170,21 +164,24 @@ $(document).on('click', '.edit-btn', function () {
 
     let id = $(this).data('id');
     $('.text-danger').text('');
-    $('#preview-container').html('');
+    $('#edit-preview-container').html('');
 
-    $.get('/daftar-menu/' + id, function (res) {
+    $.get('/daftar-produk/' + id, function (res) {
 
         $('#edit_id').val(res.id);
-        $('input[name="edit_nama_menu"]').val(res.nama_menu);
-        $('select[name="edit_kategori_menu_id"]').val(res.kategori_menu_id);
-        $('input[name="edit_harga"]').val(formatRupiah(res.harga));
-        $('textarea[name="edit_deskripsi"]').val(res.deskripsi);
+        $('input[name="edit_name"]').val(res.name);
+        $('select[name="edit_kategori_id"]').val(res.kategori_id);
+        $('input[name="edit_price"]').val(formatRupiah(res.price));
+        $('input[name="edit_stock"]').val(res.stock);
+        $('input[name="edit_unit"]').val(res.unit);
+        $('textarea[name="edit_description"]').val(res.description);
 
-        if (res.foto_menus && res.foto_menus.length > 0) {
-            res.foto_menus.forEach(foto => {
+        // preview foto lama
+        if (res.foto_produks && res.foto_produks.length > 0) {
+            res.foto_produks.forEach(foto => {
                 let img = `
-                    <div style="position:relative;">
-                        <img src="/storage/${foto.foto_path}" 
+                    <div>
+                        <img src="/storage/${foto.image}" 
                             style="width:100px;height:100px;object-fit:cover;border-radius:8px;">
                     </div>
                 `;
@@ -192,8 +189,7 @@ $(document).on('click', '.edit-btn', function () {
             });
         }
 
-        let modal = new bootstrap.Modal(document.getElementById('modalEdit'));
-        modal.show();
+        new bootstrap.Modal(document.getElementById('modalEdit')).show();
     });
 
 });
@@ -203,27 +199,27 @@ $('#formEdit').submit(function (e) {
 
     let formData = new FormData(this);
 
-    let harga = $('input[name="edit_harga"]').val().replace(/[^0-9]/g, '');
-    formData.set('edit_harga', harga);
+    let price = $('input[name="edit_price"]').val().replace(/[^0-9]/g, '');
+    formData.set('edit_price', price);
 
     formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
     $.ajax({
-        url: '/daftar-menu/update',
+        url: '/daftar-produk/update',
         type: 'POST',
         data: formData,
         processData: false,
         contentType: false,
 
         success: function (res) {
+
             $('#modalEdit').modal('hide');
-            $('#formCreate')[0].reset();
+            $('#formEdit')[0].reset();
             $('#edit-preview-container').html('');
+
             let newCard = $(generateMenuCard(res.data));
 
-            $(`.switch-ready[data-id="${res.data.id}"]`)
-                .closest('.col-xl-3')
-                .replaceWith(newCard);
+            $(`.produk-item[data-id="${res.data.id}"]`).replaceWith(newCard);
 
             alertResult('success', 'Berhasil', res.message);
         },
@@ -255,7 +251,7 @@ $(document).on('click', '.btn-delete', function () {
         if (result.isConfirmed) {
 
             $.ajax({
-                url: '/daftar-menu/delete/' + id,
+                url: '/daftar-produk/delete/' + id,
                 type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content')
@@ -292,7 +288,7 @@ $(document).on('click', '.restore-btn', function () {
         if (result.isConfirmed) {
 
             $.ajax({
-                url: '/daftar-menu/restore/' + id,
+                url: '/daftar-produk/restore/' + id,
                 type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content')
@@ -373,14 +369,14 @@ $('#search-menu').on('keyup', function () {
 let tableTrash = $('#dataTableTrash').DataTable({
     processing: true,
     ajax: {
-        url: '/daftar-menu/data-table',
+        url: '/daftar-produk/data-table',
         dataSrc: 'data',
         data: function (d) {
             d.status = 0;
         }
     },
     columnDefs: [{
-        targets: [0, 2, 3, 5],
+        targets: [0, 2, 3, 4, 5, 6],
         className: 'text-center'
     }],
     columns: [{
@@ -389,22 +385,33 @@ let tableTrash = $('#dataTableTrash').DataTable({
             return meta.row + 1;
         }
     },
+    // $table->foreignId('kategori_id');
+    // $table->foreignId('profile_usaha_id')->constrained()->cascadeOnDelete();
+
+    // $table->string('name');
+    // $table->text('description')->nullable();
+
+    // $table->decimal('price', 12, 2);
+    // $table->integer('stock')->default(0);
+
+    // $table->string('unit')->nullable(); // kg, ton, liter
     {
-        data: 'nama_menu'
+        data: 'name'
     },
-    { data: 'kategori_menu.nama_kategori' },
+    { data: 'kategori.nama_kategori' },
+    { data: 'stock' },
     {
-        data: 'is_ready',
+        data: 'price',
         render: function (data) {
-            return data ?
-                '<span class="badge bg-success">Tersedia</span>' :
-                '<span class="badge bg-secondary">Tidak Tersedia</span>';
+            return 'Rp ' + formatRupiah(data);
         }
     },
     {
-        data: 'harga',
+        data: 'is_approved',
         render: function (data) {
-            return 'Rp ' + formatRupiah(data);
+            return data ?
+                '<span class="badge bg-success">Pending</span>' :
+                '<span class="badge bg-secondary">Diterima</span>';
         }
     },
     {

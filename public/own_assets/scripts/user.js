@@ -1,3 +1,20 @@
+let mapDetail;
+let markerDetail;
+
+function initMapDetail(lat, lng) {
+
+    if (mapDetail) {
+        mapDetail.remove(); // reset map biar tidak double
+    }
+
+    mapDetail = L.map('map-detail').setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(mapDetail);
+
+    markerDetail = L.marker([lat, lng]).addTo(mapDetail);
+}
 
 $.ajaxSetup({
     headers: {
@@ -46,17 +63,14 @@ let table = $('#dataTable').DataTable({
                 case 'admin':
                     roleClass = 'bg-primary';
                     break;
-                case 'kasir':
+                case 'penjual':
                     roleClass = 'bg-info';
                     break;
-                case 'kitchen':
+                case 'pedagang':
                     roleClass = 'bg-warning';
                     break;
-                case 'customer':
+                case 'kurir':
                     roleClass = 'bg-secondary';
-                    break;
-                case 'waiter':
-                    roleClass = 'bg-dark';
                     break;
             }
             return `<span class="badge ${roleClass}">${data.charAt(0).toUpperCase() + data.slice(1)}</span>`;
@@ -67,7 +81,8 @@ let table = $('#dataTable').DataTable({
         render: function (data) {
             return `
                             <button class="btn btn-sm btn-primary edit-btn" data-id="${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${data}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${data}">Nonaktifkan</button>
+                            <button class="btn btn-sm btn-info detail-btn" data-id="${data}" data-page="data">Detail</button>
                         `;
         }
     }
@@ -115,17 +130,14 @@ let tableTrash = $('#dataTableTrash').DataTable({
                 case 'admin':
                     roleClass = 'bg-primary';
                     break;
-                case 'kasir':
+                case 'pedagang':
                     roleClass = 'bg-info';
                     break;
-                case 'kitchen':
+                case 'pembeli':
                     roleClass = 'bg-warning';
                     break;
-                case 'customer':
+                case 'kurir':
                     roleClass = 'bg-secondary';
-                    break;
-                case 'waiter':
-                    roleClass = 'bg-dark';
                     break;
             }
             return `<span class="badge ${roleClass}">${data.charAt(0).toUpperCase() + data.slice(1)}</span>`;
@@ -133,10 +145,12 @@ let tableTrash = $('#dataTableTrash').DataTable({
     },
     {
         data: 'id',
+        className: 'text-nowrap',
         render: function (data) {
             return `
                             <button class="btn btn-sm btn-primary restore-btn" data-id="${data}"><i class="fa fa-retweet" aria-hidden="true"></i></button>
                             <button class="btn btn-sm btn-danger destroy-btn" data-id="${data}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            <button class="btn btn-sm btn-info detail-btn" data-id="${data}" data-page="trash">Detail</button>
                         `;
         }
     }
@@ -158,6 +172,9 @@ $('#formCreate').submit(function (e) {
 
     let form = document.getElementById('formCreate');
     let formData = new FormData(form);
+
+    let token = $('meta[name="csrf-token"]').attr('content');
+    formData.append('_token', token);
 
     $.ajax({
         url: '/users/store',
@@ -218,6 +235,90 @@ $(document).on('click', '.edit-btn', function () {
     });
 });
 
+$(document).on('click', '.detail-btn', function () {
+    let id = $(this).data('id');
+    let button = $(this).data('page');
+
+    $('.text-danger').text('');
+
+    $.get('/user/detail/' + id, function (res) {
+
+        $('#detail_id').val(res.id);
+        $('#detail_name').val(res.name);
+        $('#detail_email').val(res.email);
+        $('#detail_role').val(res.role);
+
+        // FOTO USER
+        if (res.foto) {
+            $('#preview-detail_foto')
+                .attr('src', '/storage/' + res.foto)
+                .show();
+        } else {
+            $('#preview-detail_foto')
+                .attr('src', '/own_assets/images/avatar.png')
+                .show();
+        }
+
+        // BUTTON
+        if (button == 'data') {
+            $("#verif-button").hide();
+        } else {
+            $("#verif-button").show();
+        }
+
+        // 🔥 PEDAGANG (USAHA)
+        if (res.role == 'pedagang' && res.profile_usaha) {
+
+            $(".detail-usaha").show();
+            $(".detail-driver").hide();
+
+            $('#nama_usaha').val(res.profile_usaha.store_name);
+            $('#deskripsi_usaha').val(res.profile_usaha.description);
+
+            // LOGO USAHA
+            if (res.profile_usaha.store_photo) {
+                $('#preview-logo_usaha')
+                    .attr('src', '/storage/' + res.profile_usaha.store_photo)
+                    .show();
+            } else {
+                $('#preview-logo_usaha')
+                    .attr('src', '/own_assets/images/avatar.png')
+                    .show();
+            }
+
+            // LAT LONG
+            let lat = res.profile_usaha.latitude;
+            let lng = res.profile_usaha.longitude;
+
+            $('#detail_latitude').val(lat);
+            $('#detail_longitude').val(lng);
+
+            // INIT MAP
+            setTimeout(() => {
+                initMapDetail(lat, lng);
+            }, 300);
+
+        }
+
+        else if (res.role == 'kurir' && res.driver) {
+            $(".detail-usaha").hide();
+            $(".detail-driver").show();
+
+            $('#driver_vehicle').val(res.driver.vehicle_type ?? '-');
+            $('#driver_plate').val(res.driver.plate_number ?? '-');
+            $('#driver_rating').val(res.driver.rating ?? '0');
+            $('#driver_total').val(res.driver.total_delivery ?? '0');
+        }
+
+        else {
+            $(".detail-usaha").hide();
+            $(".detail-driver").hide();
+        }
+
+        new bootstrap.Modal(document.getElementById('modalDetail')).show();
+    });
+});
+
 $('#formEdit').submit(function (e) {
     e.preventDefault();
 
@@ -264,10 +365,10 @@ $(document).on('click', '.delete-btn', function () {
 
     Swal.fire({
         title: 'Yakin?',
-        text: "Apakah anda yakin ingin menghapus data?",
+        text: "Apakah anda yakin ingin menonaktifkan data?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Ya, hapus!',
+        confirmButtonText: 'Ya, Nonaktifkan!',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -283,7 +384,7 @@ $(document).on('click', '.delete-btn', function () {
                         table.ajax.reload(null, false);
                         alertResult('success', 'Berhasil', res.message);
                     } else {
-                        alertResult('warning', 'Hapus Data Gagal', 'Gagal menghapus data');
+                        alertResult('warning', 'Nonaktifkan Data Gagal', 'Gagal menonaktifkan data');
                     }
                 },
                 error: function () {

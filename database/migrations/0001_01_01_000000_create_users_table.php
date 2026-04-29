@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'kasir', 'kitchen', 'customer', 'waiter'])->default('kasir');
+            $table->enum('role', ['admin', 'pedagang', 'pembeli', 'kurir'])->default('pembeli');
             $table->string('foto')->nullable();
             $table->string('phone')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('status')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

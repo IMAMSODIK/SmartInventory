@@ -82,6 +82,19 @@ class UserController extends Controller
         }
     }
 
+    public function detail($id)
+    {
+        try {
+            $user = User::with(['profileUsaha', 'driver'])->findOrFail($id);
+
+            return response()->json($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+    }
+
     public function show($id)
     {
         try {
@@ -154,12 +167,12 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil dihapus'
+                'message' => 'Data berhasil dinonaktifkan'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data'
+                'message' => 'Gagal menonaktifkan data'
             ], 500);
         }
     }
