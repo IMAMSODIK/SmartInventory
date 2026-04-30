@@ -81,9 +81,9 @@ let table = $('#dataTable').DataTable({
     ]
 });
 
-setInterval(() => {
-    table.ajax.reload(null, false);
-}, 2000);
+// setInterval(() => {
+//     table.ajax.reload(null, false);
+// }, 2000);
 
 let tableDone = $('#dataTableDone').DataTable({
     processing: true,
