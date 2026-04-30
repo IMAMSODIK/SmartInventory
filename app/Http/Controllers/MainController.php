@@ -14,7 +14,7 @@ class MainController extends Controller
             ];
             return view('marketplace', $data);
         } catch (\Exception $e) {
-            return view('welcome', ['kategori' => []]);
+            return view('marketplace', ['kategori' => []]);
         }
     }
 }
