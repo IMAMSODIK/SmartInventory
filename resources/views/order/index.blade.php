@@ -95,14 +95,16 @@
                         </div>
                         <div class="card mb-4">
                             <div class="card-body">
-                                <table id="dataTableTrash" class="table table-bordered">
+                                <table id="dataTableDone" class="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No</th>
-                                            <th>Nama</th>
-                                            <th>Email</th>
+                                            <th>Order ID</th>
+                                            <th>Pembeli</th>
+                                            <th>Item</th>
+                                            <th>Total</th>
                                             <th>Status</th>
-                                            <th>Role</th>
+                                            <th>Waktu</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>

@@ -146,22 +146,29 @@ class OrderController extends Controller
         ]);
     }
 
-    public function data()
+    public function data(Request $request)
     {
         try {
+
             $user = auth()->user();
 
-            // 🔥 ambil order sesuai produk milik pedagang
-            $orders = Order::with(['buyer', 'orderItem.produk'])
-                ->whereHas('orderItem.produk', function ($q) use ($user) {
+            $query = Order::with(['buyer', 'orderItems.produk'])
+                ->whereHas('orderItems.produk', function ($q) use ($user) {
                     $q->where('profile_usaha_id', $user->profileUsaha->id);
-                })
-                ->whereIn('status', ['pending', 'paid', 'processing', 'shipping'])
-                ->latest()
-                ->get();
+                });
+
+            // 🔥 FILTER STATUS
+            if ($request->status == 'done') {
+                $query->where('status', 'delivered');
+            } else {
+                $query->whereIn('status', ['pending', 'paid', 'processing', 'shipping']);
+            }
+
+            $orders = $query->latest()->get();
 
             $data = $orders->map(function ($order) use ($user) {
-                $items = $order->orderItem->filter(function ($item) use ($user) {
+
+                $items = $order->orderItems->filter(function ($item) use ($user) {
                     return $item->produk->profile_usaha_id == $user->profileUsaha->id;
                 });
 
@@ -182,7 +189,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
 
             return response()->json([
-                'message' => 'Gagal mengambil data order',
+                'message' => 'Gagal mengambil data',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -251,89 +258,6 @@ class OrderController extends Controller
         }
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'name'  => 'required|max:100',
-    //         'email' => 'required|email|unique:users,email',
-    //         'role'  => 'required',
-    //         'foto'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    //     ], [
-    //         'name.required'  => 'Nama wajib diisi',
-    //         'email.required' => 'Email wajib diisi',
-    //         'email.unique'   => 'Email sudah digunakan',
-    //         'role.required'  => 'Role wajib dipilih',
-    //         'foto.image'     => 'File harus berupa gambar',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'errors'  => $validator->errors()
-    //         ], 422);
-    //     }
-
-    //     try {
-    //         $fotoPath = null;
-
-    //         // upload foto jika ada
-    //         if ($request->hasFile('foto')) {
-    //             $fotoPath = $request->file('foto')->store('users', 'public');
-    //         }
-
-    //         $user = User::create([
-    //             'name'  => $request->name,
-    //             'email' => $request->email,
-    //             'password' => bcrypt('12345'),
-    //             'role'  => $request->role,
-    //             'foto'  => $fotoPath,
-    //         ]);
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Data berhasil ditambahkan',
-    //             'data'    => $user
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => "Terjadi kesalahan saat menyimpan data"
-    //         ], 500);
-    //     }
-    // }
-
-    // public function show($id)
-    // {
-    //     try {
-    //         $user = User::findOrFail($id);
-
-    //         return response()->json($user);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'message' => 'Data tidak ditemukan'
-    //         ], 404);
-    //     }
-    // }
-
-    // public function deactivate($id)
-    // {
-    //     try {
-    //         $user = User::findOrFail($id);
-    //         $user->status = false;
-    //         $user->save();
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Data berhasil dinonaktifkan'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Gagal menonaktifkan data'
-    //         ], 500);
-    //     }
-    // }
-
     // public function restore($id)
     // {
     //     try {
@@ -353,26 +277,24 @@ class OrderController extends Controller
     //     }
     // }
 
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $user = User::findOrFail($id);
+    public function destroy($id)
+    {
+        try {
 
-    //         if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-    //             Storage::disk('public')->delete($user->foto);
-    //         }
+            $order = Order::findOrFail($id);
 
-    //         $user->delete();
+            $order->delete();
 
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Data berhasil dihapus'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Gagal menghapus data'
-    //         ], 500);
-    //     }
-    // }
+            return response()->json([
+                'success' => true,
+                'message' => 'Order berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'message' => 'Gagal hapus',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
