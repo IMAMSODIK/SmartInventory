@@ -214,18 +214,16 @@ $(document).on('click', '.process-btn, .ship-btn, .done-btn', function () {
                 .removeClass('bg-warning bg-info bg-primary bg-dark bg-success')
                 .addClass(getBadgeClass(status))
                 .text(status);
-
-            // 🔥 update tombol (ganti tombol sesuai status baru)
             row.find('.action-cell').html(generateActionButton({
                 id: id,
                 status: status
             }));
 
-            toastr.success(res.message);
+            alertResult('success', 'Berhasil', res.message);
         },
 
         error: function () {
-            toastr.error('Gagal update');
+            alertResult('warning', 'Gagal', 'Gagal update data');
         }
     });
 });
