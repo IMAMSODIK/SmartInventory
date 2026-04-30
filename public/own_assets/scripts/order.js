@@ -4,6 +4,14 @@ $.ajaxSetup({
     }
 });
 
+function getBadgeClass(status) {
+    if (status === 'pending') return 'bg-warning';
+    if (status === 'processing') return 'bg-primary';
+    if (status === 'shipping') return 'bg-dark';
+    if (status === 'delivered') return 'bg-success';
+    return 'bg-secondary';
+}
+
 function generateActionButton(item) {
 
     if (item.status === 'pending') {
@@ -18,7 +26,7 @@ function generateActionButton(item) {
         return `<button class="btn btn-sm btn-success done-btn" data-id="${item.id}">Selesai</button>`;
     }
 
-    return '-';
+    return `<span class="text-success">Selesai</span>`;
 }
 
 let table = $('#dataTable').DataTable({
@@ -29,7 +37,7 @@ let table = $('#dataTable').DataTable({
     },
     columnDefs: [
         { targets: '_all', className: 'align-middle' },
-        { targets: [0,3,4,5,6], className: 'text-center' }
+        { targets: [0, 3, 4, 5, 6], className: 'text-center' }
     ],
     columns: [
         {
@@ -165,7 +173,7 @@ $(document).on('click', '.detail-btn', function () {
                     <td>
                         <span class="badge bg-info">${item.status}</span>
                     </td>
-                    <td>
+                    <td class="action-cell">
                         ${generateActionButton(item)}
                     </td>
                 </tr>
@@ -197,15 +205,29 @@ $(document).on('click', '.process-btn, .ship-btn, .done-btn', function () {
             item_id: id,
             status: status
         },
+
         success: function (res) {
-            alertResult('success', 'Berhasil', res.message);
-            btn.closest('tr').find('.badge').text(status);
+            let row = btn.closest('tr');
+            let badge = row.find('.status-badge');
+
+            badge
+                .removeClass('bg-warning bg-info bg-primary bg-dark bg-success')
+                .addClass(getBadgeClass(status))
+                .text(status);
+
+            // 🔥 update tombol (ganti tombol sesuai status baru)
+            row.find('.action-cell').html(generateActionButton({
+                id: id,
+                status: status
+            }));
+
+            toastr.success(res.message);
         },
+
         error: function () {
-            alertResult('warning', 'Gagal', 'Gagal update data');
+            toastr.error('Gagal update');
         }
     });
-
 });
 
 $(document).on('click', '.delete-btn', function () {
