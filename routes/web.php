@@ -13,9 +13,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/', function(){
-    return view('welcome');
-});
 
 Route::get('/marketplace', [MainController::class, 'index']);
 Route::get('/daftar-produk/load-data', [ProdukController::class, 'loadData']);
@@ -79,4 +76,8 @@ Route::fallback(function () {
 
 Route::get('/coming-soon', function () {
     return view('pages.coming_soon');
+});
+
+Route::get('/', function(){
+    return view('welcome');
 });
