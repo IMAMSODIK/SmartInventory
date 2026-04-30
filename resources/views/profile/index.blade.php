@@ -1,5 +1,13 @@
 @extends('layouts.template')
 
+@section('own_style')
+    <style>
+        .alamat-item[data-default="true"] {
+            border: 2px solid #28a745;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="page-title">
@@ -138,6 +146,70 @@
                         </div>
                     </form>
                 </div>
+
+                @if (auth()->user()->role == 'pembeli')
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Daftar Alamat</h4>
+                            </div>
+
+                            <div class="card-body" id="alamat-container">
+                                <!-- isi dari JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8">
+                        <form class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Pengaturan Alamat</h4>
+                                <div class="card-options"><a class="card-options-collapse" href="#"
+                                        data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a
+                                        class="card-options-remove" href="#" data-bs-toggle="card-remove"><i
+                                            class="fe fe-x"></i></a></div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Label Alamat</label>
+                                            <select class="form-control" name="label" id="label">
+                                                <option value="Rumah">Rumah</option>
+                                                <option value="Kantor">Kantor</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Alamat Lengkap</label>
+                                            <textarea class="form-control" id="full_address" rows="3" readonly></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div id="map-alamat" style="height:300px; border-radius:10px;"></div>
+                                    </div>
+
+                                    <div class="col-md-12 mt-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" id="latitude" class="form-control"
+                                                    placeholder="Latitude" readonly>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" id="longitude" class="form-control"
+                                                    placeholder="Longitude" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button class="btn btn-primary" type="button" id="add-address">Simpan Alamat</button>
+                            </div>
+                        </form>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -191,6 +263,8 @@
 
 @section('own_script')
     <script src="{{ asset('own_assets/scripts/student.js') }}"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.getElementById('foto').addEventListener('change', function(event) {
             const [file] = event.target.files;
@@ -282,7 +356,7 @@
                 success: function(res) {
                     alertModal(true, res.message ?? 'Profile updated successfully');
                     setTimeout(() => {
-                        location.reload() 
+                        location.reload()
                     }, 1000);
                 },
                 error: function(xhr) {
@@ -323,6 +397,234 @@
                 error: function(xhr) {
                     alertModal(false, xhr.responseJSON?.message ?? 'Failed to update password');
                 }
+            });
+        });
+    </script>
+
+    <script>
+        let map, marker;
+
+        map = L.map('map-alamat').setView([3.5952, 98.6722], 13); // default medan
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
+
+        // klik map
+        map.on('click', function(e) {
+            let lat = e.latlng.lat;
+            let lng = e.latlng.lng;
+
+            $('#latitude').val(lat);
+            $('#longitude').val(lng);
+
+            if (marker) map.removeLayer(marker);
+            marker = L.marker([lat, lng]).addTo(map);
+
+            // 🔥 reverse geocoding (ambil alamat)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    $('#full_address').val(data.display_name);
+                });
+        });
+
+        // auto detect lokasi awal
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                let lat = pos.coords.latitude;
+                let lng = pos.coords.longitude;
+
+                map.setView([lat, lng], 15);
+                marker = L.marker([lat, lng]).addTo(map);
+
+                $('#latitude').val(lat);
+                $('#longitude').val(lng);
+
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        $('#full_address').val(data.display_name);
+                    });
+            });
+        }
+
+
+        $('#add-address').on('click', function() {
+
+            let btn = $(this);
+            let formData = new FormData();
+
+            formData.append('label', $('#label').val());
+            formData.append('full_address', $('#full_address').val());
+            formData.append('latitude', $('#latitude').val());
+            formData.append('longitude', $('#longitude').val());
+
+            btn.prop('disabled', true).text('Menyimpan...');
+
+            $.ajax({
+                url: '/alamat/store',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+
+                success: function(res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: res.message ?? 'Profile updated successfully'
+                    });
+                    location.reload();
+                },
+
+                error: function(xhr) {
+                    let msg = 'Terjadi kesalahan';
+
+                    if (xhr.responseJSON?.errors) {
+                        msg = Object.values(xhr.responseJSON.errors).join('\n');
+                    }
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal',
+                        text: msg
+                    });
+                },
+
+                complete: function() {
+                    btn.prop('disabled', false).text('Update Profile');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(function() {
+            loadAlamat();
+
+            function generateAlamatCard(alamat) {
+
+                let badge = alamat.is_default ?
+                    `<span class="badge bg-success">Default</span>` :
+                    `<button class="btn btn-sm btn-outline-primary set-default" data-id="${alamat.id}">
+                        Jadikan Default
+                </button>`;
+
+                return `
+                    <div class="card mb-2 shadow-sm alamat-item" data-id="${alamat.id}">
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-start">
+                                <strong>${alamat.label ?? 'Alamat'}</strong>
+                                ${badge}
+                            </div>
+
+                            <p class="text-muted small mt-2 mb-2">
+                                ${alamat.full_address}
+                            </p>
+
+                            <small class="text-muted">
+                                Lat: ${alamat.latitude} <br>
+                                Lng: ${alamat.longitude}
+                            </small>
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button class="btn btn-sm btn-danger delete-alamat" data-id="${alamat.id}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+            }
+
+            function loadAlamat() {
+                $.get('/alamat/list', function(res) {
+
+                    $('#alamat-container').html('');
+
+                    res.data.forEach(item => {
+                        $('#alamat-container').append(generateAlamatCard(item));
+                    });
+
+                });
+            }
+
+            $(document).on('click', '.set-default', function() {
+
+                let id = $(this).data('id');
+
+                $.ajax({
+                    url: '/alamat/set-default/' + id,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+
+                    success: function(res) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: res.message
+                        });
+                        setTimeout(function(){
+                            location.reload()
+                        }, 1500)
+                    },
+
+                    error: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Gagal',
+                            text: 'Gagal set default'
+                        });
+                    }
+                });
+
+            });
+
+            $(document).on('click', '.delete-alamat', function() {
+
+                let id = $(this).data('id');
+
+                if (!confirm('Yakin ingin menghapus alamat ini?')) return;
+
+                $.ajax({
+                    url: '/alamat/delete/' + id,
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+
+                    success: function(res) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: res.message
+                        });
+
+                        $(`.alamat-item[data-id="${id}"]`).fadeOut(300, function() {
+                            $(this).remove();
+                            if ($('.alamat-item').length === 0) {
+                                loadAlamat();
+                            }
+                        });
+                    },
+
+                    error: function() {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Gagal',
+                            text: 'Gagal menghapus alamat'
+                        });
+                    }
+                });
+
             });
         });
     </script>

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('order_id')->unique();
             $table->foreignId('buyer_id')->constrained('users');
-            $table->foreignId('profile_usaha_id')->constrained();
             $table->foreignId('alamat_id')->constrained();
 
             $table->enum('status', [
@@ -24,12 +24,18 @@ return new class extends Migration
                 'shipping',
                 'delivered',
                 'cancelled',
-                'complaint'
+                'complaint',
+                'challenge',
+                'deny',
+                'expired'
             ])->default('pending');
 
-            $table->decimal('subtotal', 12, 2);
             $table->decimal('shipping_cost', 12, 2);
             $table->decimal('total', 12, 2);
+
+            $table->string('payment_type')->nullable();
+            $table->string('transaction_id')->nullable();
+            $table->string('fraud_status')->nullable();
             $table->timestamps();
         });
     }

@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('produk_id')->constrained();
 
+            $table->string('nama_produk');
             $table->integer('qty');
-            $table->decimal('price', 12, 2);
+            $table->decimal('harga', 12, 2);
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }

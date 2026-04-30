@@ -72,7 +72,6 @@ class ProdukController extends Controller
     public function loadData(Request $request)
     {
         try {
-
             $query = Produk::with(['fotoProduk', 'kategori'])
                 ->where('status', $request->status ?? 1)
                 ->where('status', 1);
