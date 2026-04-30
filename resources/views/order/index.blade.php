@@ -348,6 +348,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalDetailOrder">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5>Detail Order</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <h6 id="order-id"></h6>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Qty</th>
+                                <th>Harga</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-items"></tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('own_script')

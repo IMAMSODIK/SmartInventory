@@ -4,6 +4,23 @@ $.ajaxSetup({
     }
 });
 
+function generateActionButton(item) {
+
+    if (item.status === 'pending') {
+        return `<button class="btn btn-sm btn-primary process-btn" data-id="${item.id}">Proses</button>`;
+    }
+
+    if (item.status === 'processing') {
+        return `<button class="btn btn-sm btn-warning ship-btn" data-id="${item.id}">Kirim</button>`;
+    }
+
+    if (item.status === 'shipping') {
+        return `<button class="btn btn-sm btn-success done-btn" data-id="${item.id}">Selesai</button>`;
+    }
+
+    return '-';
+}
+
 let table = $('#dataTable').DataTable({
     processing: true,
     ajax: {
@@ -128,58 +145,67 @@ let tableTrash = $('#dataTableTrash').DataTable({
     ]
 });
 
-$('#tambah-data').on('click', function () {
-    $('#formCreate')[0].reset();
-    $('.text-danger').text('');
+$(document).on('click', '.detail-btn', function () {
 
-    let modal = new bootstrap.Modal(document.getElementById('modalCreate'));
-    modal.show();
+    let id = $(this).data('id');
+
+    $.get('/order/detail/' + id, function (res) {
+
+        $('#order-id').text('Order: ' + res.order_id);
+
+        let html = '';
+
+        res.items.forEach(item => {
+
+            html += `
+                <tr>
+                    <td>${item.produk}</td>
+                    <td>${item.qty}</td>
+                    <td>Rp ${formatRupiah(item.harga)}</td>
+                    <td>
+                        <span class="badge bg-info">${item.status}</span>
+                    </td>
+                    <td>
+                        ${generateActionButton(item)}
+                    </td>
+                </tr>
+            `;
+        });
+
+        $('#order-items').html(html);
+
+        new bootstrap.Modal(document.getElementById('modalDetailOrder')).show();
+    });
+
 });
 
-$('#formCreate').submit(function (e) {
-    e.preventDefault();
+$(document).on('click', '.process-btn, .ship-btn, .done-btn', function () {
 
-    $('.text-danger').text('');
+    let btn = $(this);
+    let id = btn.data('id');
 
-    let form = document.getElementById('formCreate');
-    let formData = new FormData(form);
+    let status = 'processing';
 
-    let token = $('meta[name="csrf-token"]').attr('content');
-    formData.append('_token', token);
+    if (btn.hasClass('ship-btn')) status = 'shipping';
+    if (btn.hasClass('done-btn')) status = 'delivered';
 
     $.ajax({
-        url: '/users/store',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (res) {
-            if (res.success) {
-                $('#modalCreate').modal('hide');
-
-                $('#formCreate')[0].reset();
-                $('#preview-foto').hide();
-
-                table.ajax.reload(null, false);
-
-                alertResult('success', 'Berhasil', res.message);
-            }
+        url: '/order/update-status',
+        method: 'POST',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            item_id: id,
+            status: status
         },
-        error: function (err) {
-            if (err.status === 422) {
-                let errors = err.responseJSON.errors;
-
-                $.each(errors, function (key, value) {
-                    $('.error-' + key).text(value[0]);
-                });
-
-                alertResult('warning', 'Validasi Gagal', 'Periksa kembali data kamu');
-
-            } else {
-                alertResult('error', 'Error', 'Terjadi kesalahan server');
-            }
+        success: function (res) {
+            toastr.success(res.message);
+            btn.closest('tr').find('.badge').text(status);
+        },
+        error: function () {
+            toastr.error('Gagal update');
         }
     });
+
 });
 
 $(document).on('click', '.edit-btn', function () {

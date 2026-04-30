@@ -45,7 +45,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/daftar-produk/destroy/{id}', [ProdukController::class, 'destroy']);
     Route::post('/daftar-produk/toggle-approve', [ProdukController::class, 'toggleApprove']);
 
-    Route::get('/daftar-order/detail/{id}', [OrderController::class, 'detail']);
+    Route::get('/order/detail/{id}', [OrderController::class, 'detail']);
+    Route::post('/order/update-status', [OrderController::class, 'updateStatus']);
     Route::get('/daftar-order/data', [OrderController::class, 'data']);
     Route::get('/daftar-order', [OrderController::class, 'index']);
     Route::get('/daftar-order/{id}', [OrderController::class, 'show']);

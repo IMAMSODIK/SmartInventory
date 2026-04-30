@@ -163,7 +163,7 @@ class OrderController extends Controller
             $data = $orders->map(function ($order) use ($user) {
                 $items = $order->orderItem->filter(function ($item) use ($user) {
                     return $item->produk->profile_usaha_id == $user->profileUsaha->id;
-                });     
+                });
 
                 return [
                     'id' => $order->id,
@@ -183,6 +183,69 @@ class OrderController extends Controller
 
             return response()->json([
                 'message' => 'Gagal mengambil data order',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function detail($id)
+    {
+        try {
+
+            $user = auth()->user();
+
+            $order = Order::with(['buyer', 'orderItems.produk'])
+                ->findOrFail($id);
+
+            // 🔥 ambil item milik pedagang ini saja
+            $items = $order->orderItems->filter(function ($item) use ($user) {
+                return $item->produk->profile_usaha_id == $user->profileUsaha->id;
+            });
+
+            return response()->json([
+                'order_id' => $order->order_id,
+                'buyer' => $order->buyer->name,
+                'status' => $order->status,
+                'items' => $items->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'produk' => $item->nama_produk,
+                        'qty' => $item->qty,
+                        'harga' => $item->harga,
+                        'status' => $item->status
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal ambil detail',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'item_id' => 'required|exists:order_items,id',
+                'status' => 'required|in:processing,shipping,delivered'
+            ]);
+
+            $item = OrderItem::findOrFail($request->item_id);
+
+            $item->update([
+                'status' => $request->status
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status berhasil diupdate'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal update status',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -239,19 +302,6 @@ class OrderController extends Controller
     //     }
     // }
 
-    // public function detail($id)
-    // {
-    //     try {
-    //         $user = User::with(['profileUsaha', 'driver'])->findOrFail($id);
-
-    //         return response()->json($user);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'message' => 'Data tidak ditemukan'
-    //         ], 404);
-    //     }
-    // }
-
     // public function show($id)
     // {
     //     try {
@@ -262,56 +312,6 @@ class OrderController extends Controller
     //         return response()->json([
     //             'message' => 'Data tidak ditemukan'
     //         ], 404);
-    //     }
-    // }
-
-    // public function update(Request $request, $id)
-    // {
-    //     $user = User::findOrFail($id);
-
-    //     $validator = Validator::make($request->all(), [
-    //         'name'  => 'required|max:100',
-    //         'email' => 'required|email|unique:users,email,' . $id,
-    //         'role'  => 'required',
-    //         'foto'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'errors'  => $validator->errors()
-    //         ], 422);
-    //     }
-
-    //     try {
-    //         $fotoPath = $user->foto;
-
-    //         if ($request->hasFile('foto')) {
-
-    //             // hapus foto lama
-    //             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-    //                 Storage::disk('public')->delete($user->foto);
-    //             }
-
-    //             $fotoPath = $request->file('foto')->store('users', 'public');
-    //         }
-
-    //         $user->update([
-    //             'name'  => $request->name,
-    //             'email' => $request->email,
-    //             'role'  => $request->role,
-    //             'foto'  => $fotoPath,
-    //         ]);
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'Data berhasil diupdate'
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Gagal update data'
-    //         ], 500);
     //     }
     // }
 
