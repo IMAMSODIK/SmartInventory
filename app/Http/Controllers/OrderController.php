@@ -157,7 +157,6 @@ class OrderController extends Controller
                     $q->where('profile_usaha_id', $user->profileUsaha->id);
                 });
 
-            // 🔥 FILTER STATUS
             if ($request->status == 'done') {
                 $query->where('status', 'delivered');
             } else {
