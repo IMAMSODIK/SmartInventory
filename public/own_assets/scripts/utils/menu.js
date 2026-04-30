@@ -22,9 +22,9 @@ function loadMenu() {
             let container = $('#menu-container');
             container.hide().html('');
 
-            if(!res.check_profile){
+            if (!res.check_profile) {
                 container.html('<p class="text-center">Silahkan Update Profile Usaha</p><br><a href="/profile-usaha" class="btn btn-success">Update Profile Usaha</button>');
-            }else{
+            } else {
                 if (res.data.length === 0) {
                     container.html('<p class="text-center">Data tidak ditemukan</p>');
                 } else {
@@ -94,6 +94,12 @@ function renderMenu(data) {
                                 </div>
                             </div>
 
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    
+                                </div>
+                            </div>
+
                         </div>
 
                     </div>
@@ -111,6 +117,22 @@ function generateMenuCard(menu) {
 
     if (menu.foto_produk && menu.foto_produk.length > 0) {
         img = '/storage/' + menu.foto_produk[0].image;
+    }
+
+    let actionButton = '';
+
+    if (menu.is_approved) {
+        actionButton = `
+        <button class="btn btn-sm btn-warning suspend-btn w-100" data-id="${menu.id}">
+            <i class="fa fa-ban"></i> Suspend
+        </button>
+    `;
+    } else {
+        actionButton = `
+        <button class="btn btn-sm btn-success approve-btn w-100" data-id="${menu.id}">
+            <i class="fa fa-check"></i> Approve
+        </button>
+    `;
     }
 
     return `
@@ -149,6 +171,12 @@ function generateMenuCard(menu) {
                             <div class="product-price">
                                 Rp ${formatRupiah(menu.price)}
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-12">
+                            ${actionButton}
                         </div>
                     </div>
 

@@ -43,6 +43,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/daftar-produk/delete/{id}', [ProdukController::class, 'deactivate']);
     Route::post('/daftar-produk/restore/{id}', [ProdukController::class, 'restore']);
     Route::delete('/daftar-produk/destroy/{id}', [ProdukController::class, 'destroy']);
+    Route::post('/daftar-produk/toggle-approve', [ProdukController::class, 'toggleApprove']);
+
+    Route::get('/daftar-order/detail/{id}', [OrderController::class, 'detail']);
+    Route::get('/daftar-order/data', [OrderController::class, 'data']);
+    Route::get('/daftar-order', [OrderController::class, 'index']);
+    Route::get('/daftar-order/{id}', [OrderController::class, 'show']);
+    Route::post('/daftar-order/store', [OrderController::class, 'store']);
+    Route::post('/daftar-order/update/{id}', [OrderController::class, 'update']);
+    Route::post('/daftar-order/delete/{id}', [OrderController::class, 'deactivate']);
+    Route::post('/daftar-order/restore/{id}', [OrderController::class, 'restore']);
+    Route::delete('/daftar-order/destroy/{id}', [OrderController::class, 'destroy']);
 
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile', [ProfileController::class, 'update']);

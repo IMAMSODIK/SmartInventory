@@ -33,38 +33,57 @@ class ProdukController extends Controller
         try {
             $user = Auth::user();
 
-            if (!$user || !$user->profileUsaha) {
-                return response()->json([
-                    'check_profile' => false,
-                    'message' => 'Profile usaha tidak ditemukan'
-                ]);
+            if ($user->role == 'admin') {
+
+                $query = Produk::with(['fotoProduk', 'kategori'])
+                    ->where('status', 1);
+
+                $checkProfile = true;
+            } else if ($user->role == 'pedagang') {
+
+                if (!$user->profileUsaha) {
+                    return response()->json([
+                        'check_profile' => false,
+                        'message' => 'Profile usaha tidak ditemukan'
+                    ]);
+                }
+
+                $query = Produk::with(['fotoProduk', 'kategori'])
+                    ->where('profile_usaha_id', $user->profileUsaha->id)
+                    ->where('status', 1);
+
+                $checkProfile = true;
             }
 
-            $query = Produk::with(['fotoProduk', 'kategori'])
-                ->where('profile_usaha_id', $user->profileUsaha->id)
-                ->where('status', 1);
+            // 🔥 role lain (optional)
+            else {
+                return response()->json([
+                    'check_profile' => false,
+                    'message' => 'Role tidak diizinkan'
+                ], 403);
+            }
 
-            // filter kategori
+            // 🔍 filter kategori (tetap sama)
             if ($request->filled('kategori') && is_array($request->kategori)) {
                 $query->whereIn('kategori_id', $request->kategori);
             }
 
-            // search
+            // 🔍 search (tetap sama)
             if ($request->filled('search')) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             }
 
-            $menu = $query->get();
+            $produk = $query->get();
 
             return response()->json([
-                'check_profile' => true,
-                'data' => $menu
+                'check_profile' => $checkProfile,
+                'data' => $produk
             ]);
         } catch (\Exception $e) {
 
             return response()->json([
                 'message' => 'Gagal mengambil data',
-                'error' => $e->getMessage() // opsional (debug)
+                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -74,6 +93,7 @@ class ProdukController extends Controller
         try {
             $query = Produk::with(['fotoProduk', 'kategori'])
                 ->where('status', $request->status ?? 1)
+                ->where('is_approved', 1)
                 ->where('status', 1);
 
             if ($request->filled('kategori') && $request->kategori != '0') {
@@ -322,4 +342,34 @@ class ProdukController extends Controller
     //         ], 500);
     //     }
     // }
+
+    public function toggleApprove(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|exists:produks,id'
+            ]);
+
+            $produk = Produk::findOrFail($request->id);
+
+            $produk->is_approved = !$produk->is_approved;
+            $produk->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $produk->is_approved ? 'Produk di-approve' : 'Produk di-suspend',
+                'data' => [
+                    'id' => $produk->id,
+                    'is_approved' => $produk->is_approved
+                ]
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal update status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

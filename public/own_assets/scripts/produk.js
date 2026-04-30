@@ -433,3 +433,52 @@ $(".refresh-data-table").on("click", function () {
         tableTrash.ajax.reload(null, false);
     }
 })
+
+$(document).on('click', '.approve-btn, .suspend-btn', function () {
+
+    let btn = $(this);
+    let id = btn.data('id');
+
+    btn.prop('disabled', true).text('Loading...');
+
+    $.ajax({
+        url: '/daftar-produk/toggle-approve',
+        method: 'POST',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+            id: id
+        },
+
+        success: function (res) {
+
+            if (res.success) {
+
+                let isApproved = res.data.is_approved;
+                let newButton = '';
+
+                if (isApproved) {
+                    newButton = `
+                        <button class="btn btn-sm btn-warning suspend-btn w-100" data-id="${id}">
+                            <i class="fa fa-ban"></i> Suspend
+                        </button>
+                    `;
+                } else {
+                    newButton = `
+                        <button class="btn btn-sm btn-success approve-btn w-100" data-id="${id}">
+                            <i class="fa fa-check"></i> Approve
+                        </button>
+                    `;
+                }
+
+                // 🔥 replace tombol tanpa reload
+                btn.closest('.col-12').html(newButton);
+
+                toastr.success(res.message);
+            }
+        },
+
+        error: function () {
+            toastr.error('Gagal update status');
+        }
+    });
+});

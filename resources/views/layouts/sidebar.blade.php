@@ -58,7 +58,7 @@
                     </div>
                 </li>
 
-                @if (auth()->user()->role == 'pedagang')
+                @if (in_array(auth()->user()->role, ['pedagang', 'admin']))
                     <li class="sidebar-list">
                         <a class="sidebar-link sidebar-title link-nav" href="/daftar-produk">
                             <i class="fa fa-cutlery text-white" aria-hidden="true"></i>
