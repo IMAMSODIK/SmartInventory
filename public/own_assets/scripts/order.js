@@ -198,11 +198,11 @@ $(document).on('click', '.process-btn, .ship-btn, .done-btn', function () {
             status: status
         },
         success: function (res) {
-            toastr.success(res.message);
+            alertResult('success', 'Berhasil', res.message);
             btn.closest('tr').find('.badge').text(status);
         },
         error: function () {
-            toastr.error('Gagal update');
+            alertResult('warning', 'Gagal', 'Gagal update data');
         }
     });
 
