@@ -194,11 +194,11 @@ class OrderController extends Controller
 
             $user = auth()->user();
 
-            $order = Order::with(['buyer', 'orderItems.produk'])
+            $order = Order::with(['buyer', 'orderItem.produk'])
                 ->findOrFail($id);
 
             // 🔥 ambil item milik pedagang ini saja
-            $items = $order->orderItems->filter(function ($item) use ($user) {
+            $items = $order->orderItem->filter(function ($item) use ($user) {
                 return $item->produk->profile_usaha_id == $user->profileUsaha->id;
             });
 
