@@ -152,8 +152,8 @@ class OrderController extends Controller
 
             $user = auth()->user();
 
-            $query = Order::with(['buyer', 'orderItems.produk'])
-                ->whereHas('orderItems.produk', function ($q) use ($user) {
+            $query = Order::with(['buyer', 'orderItem.produk'])
+                ->whereHas('orderItem.produk', function ($q) use ($user) {
                     $q->where('profile_usaha_id', $user->profileUsaha->id);
                 });
 
@@ -168,7 +168,7 @@ class OrderController extends Controller
 
             $data = $orders->map(function ($order) use ($user) {
 
-                $items = $order->orderItems->filter(function ($item) use ($user) {
+                $items = $order->orderItem->filter(function ($item) use ($user) {
                     return $item->produk->profile_usaha_id == $user->profileUsaha->id;
                 });
 
