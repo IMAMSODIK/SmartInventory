@@ -22,7 +22,7 @@
     <aside id="sidebar" class="sidebar fixed top-0 left-0 w-72 h-full bg-white shadow-2xl z-50 flex flex-col">
         <div class="p-5 border-b flex justify-between items-center">
             <h2 class="text-xl font-bold text-orange-600">
-                <img src="{{ asset('own_assets/logo/logo.png') }}" width="50%">
+                <img src="{{ asset('own_assets/logo/logo.png') }}" width="20%">
             </h2>
             <button id="closeSidebarBtn" class="text-gray-500 text-2xl"><i class="fas fa-times"></i></button>
         </div>
@@ -55,7 +55,7 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1 class="text-xl font-bold text-gray-800">
-                    <img src="{{ asset('own_assets/logo/logo.png') }}" width="50%">
+                    <img src="{{ asset('own_assets/logo/logo.png') }}" width="20%">
                 </h1>
             </div>
         </header>

@@ -42,8 +42,52 @@
 <script src="{{ asset('dashboard_assets/assets/js/theme-customizer/customizer.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+<script>
+    let trackingInterval = null;
+
+    function startTracking() {
+
+        if (trackingInterval) return;
+
+        trackingInterval = setInterval(() => {
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+
+                    let lat = position.coords.latitude;
+                    let lng = position.coords.longitude;
+
+                    $.post('/driver/update-location', {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        lat: lat,
+                        lng: lng
+                    });
+
+                });
+            }
+
+        }, 5000);
+    }
+
+    function stopTracking() {
+        clearInterval(trackingInterval);
+        trackingInterval = null;
+    }
+</script>
+
 <script>
     new WOW().init();
+    $(document).ready(function() {
+
+        $.get('/driver/status', function(res) {
+            $('#driver-status').prop('checked', res.is_online == 1);
+            if (res.is_online == 1) {
+                startTracking();
+            }
+        });
+
+    });
 
     $("#logout").on("click", function() {
         let token = $("meta[name='csrf-token']").attr('content');
@@ -139,6 +183,50 @@
         };
 
         reader.readAsDataURL(file);
+    });
+</script>
+
+<script>
+    $('#driver-status').on('change', function() {
+
+        let isOnline = $(this).is(':checked') ? 1 : 0;
+
+        $.ajax({
+            url: '/driver/toggle-status',
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                is_online: isOnline
+            },
+
+            success: function(res) {
+                if (res.success) {
+                    if (isOnline) {
+                        startTracking();
+                    } else {
+                        stopTracking();
+                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: res.message,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal',
+                        text: 'Gagal update status',
+                    });
+                }
+
+            },
+
+            error: function() {
+                toastr.error('Terjadi kesalahan');
+                $('#driver-status').prop('checked', !isOnline);
+            }
+        });
+
     });
 </script>
 

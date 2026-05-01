@@ -89,11 +89,10 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
-                <a href="service.html" class="nav-item nav-link">Service</a>
-                <a href="quote.html" class="nav-item nav-link">Quote</a>
-                <a href="team.html" class="nav-item nav-link">Team</a>
-                <a href="contact.html" class="nav-item nav-link">Contact</a>
+                <a href="#about" class="nav-item nav-link">About</a>
+                <a href="#service" class="nav-item nav-link">Service</a>
+                <a href="#team" class="nav-item nav-link">Team</a>
+                <a href="#contact" class="nav-item nav-link">Contact</a>
             </div>
             <a href="#register" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Join Now<i
                     class="fa fa-arrow-right ms-3"></i></a>
@@ -105,14 +104,17 @@
     <!-- Carousel Start -->
     <div class="container-fluid p-0 pb-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="owl-carousel header-carousel position-relative">
-            <div class="owl-carousel-item position-relative" data-dot="<img src='{{asset('landing_assets/img/hero1.png')}}'>">
-                <img class="img-fluid" src="{{asset('landing_assets/img/hero1.png')}}" alt="">
+            <div class="owl-carousel-item position-relative"
+                data-dot="<img src='{{ asset('landing_assets/img/hero1.png') }}'>">
+                <img class="img-fluid" src="{{ asset('landing_assets/img/hero1.png') }}" alt="">
                 <div class="owl-carousel-inner">
                     <div class="container">
                         <div class="row justify-content-start">
                             <div class="col-10 col-lg-8">
-                                <h1 class="display-2 text-white animated slideInDown">Connecting Farms and Oceans to Your Doorstep</h1>
-                                <p class="fs-5 fw-medium text-white mb-4 pb-3">VFresh commodities, directly from farmers and fishermen. <br>fast, transparent, and reliable.</p>
+                                <h1 class="display-2 text-white animated slideInDown">Connecting Farms and Oceans to
+                                    Your Doorstep</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-3">VFresh commodities, directly from farmers
+                                    and fishermen. <br>fast, transparent, and reliable.</p>
                                 <a href="#register"
                                     class="btn btn-primary rounded-pill py-3 px-5 animated slideInLeft">Join Now!</a>
                             </div>
@@ -127,8 +129,10 @@
                     <div class="container">
                         <div class="row justify-content-start">
                             <div class="col-10 col-lg-8">
-                                <h1 class="display-2 text-white animated slideInDown">From Harvest and Catch to Market—Seamlessly</h1>
-                                <p class="fs-5 fw-medium text-white mb-4 pb-3">Get the freshest vegetables and seafood with a smarter, shorter supply chain.</p>
+                                <h1 class="display-2 text-white animated slideInDown">From Harvest and Catch to
+                                    Market—Seamlessly</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-3">Get the freshest vegetables and seafood
+                                    with a smarter, shorter supply chain.</p>
                                 <a href="#register"
                                     class="btn btn-primary rounded-pill py-3 px-5 animated slideInLeft">Join Now</a>
                             </div>
@@ -143,8 +147,10 @@
                     <div class="container">
                         <div class="row justify-content-start">
                             <div class="col-10 col-lg-8">
-                                <h1 class="display-2 text-white animated slideInDown">One Platform. Farmers, Fishermen, Buyers, and Couriers.</h1>
-                                <p class="fs-5 fw-medium text-white mb-4 pb-3">Empowering local producers and delivering freshness across every mile.</p>
+                                <h1 class="display-2 text-white animated slideInDown">One Platform. Farmers, Fishermen,
+                                    Buyers, and Couriers.</h1>
+                                <p class="fs-5 fw-medium text-white mb-4 pb-3">Empowering local producers and
+                                    delivering freshness across every mile.</p>
                                 <a href="#register"
                                     class="btn btn-primary rounded-pill py-3 px-5 animated slideInLeft">Read More</a>
                             </div>
@@ -158,21 +164,23 @@
 
 
     <!-- About Start -->
-    <div class="container-fluid bg-light overflow-hidden my-5 px-lg-0">
+    <div class="container-fluid bg-light overflow-hidden my-5 px-lg-0" id="about">
         <div class="container about px-lg-0">
             <div class="row g-0 mx-lg-0">
                 <div class="col-lg-6 ps-lg-0 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">
                     <div class="position-relative h-100">
                         <img class="position-absolute img-fluid w-100 h-100"
-                            src="{{ asset('landing_assets/img/about.jpg') }}" style="object-fit: cover;"
+                            src="{{ asset('landing_assets/img/hero3.jpeg') }}" style="object-fit: cover;"
                             alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 about-text py-5 wow fadeIn" data-wow-delay="0.5s">
                     <div class="p-lg-5 pe-lg-0">
                         <h6 class="text-primary">About Us</h6>
-                        <h3 class="mb-4">A platform connecting farmers, fishermen, buyers, and couriers in one seamless fresh commodity ecosystem.</h3>
-                        <p>We aim to simplify the supply chain by bringing products directly from the source—farms and oceans—straight to consumers and businesses.</p>
+                        <h3 class="mb-4">A platform connecting farmers, fishermen, buyers, and couriers in one
+                            seamless fresh commodity ecosystem.</h3>
+                        <p>We aim to simplify the supply chain by bringing products directly from the source—farms and
+                            oceans—straight to consumers and businesses.</p>
                         <a href="" class="btn btn-primary rounded-pill py-3 px-5 mt-3">Explore More</a>
                     </div>
                 </div>
@@ -183,7 +191,7 @@
 
 
     <!-- Service Start -->
-    <div class="container-xxl py-5">
+    <div class="container-xxl py-5" id="service">
         <div class="container">
             <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
                 <h6 class="text-primary">Our Services</h6>
@@ -192,91 +200,40 @@
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-1.jpg') }}"
-                            alt="">
+                        <img class="img-fluid" src="{{ asset('landing_assets/img/service1.jpg') }}" alt="">
                         <div class="position-relative p-4 pt-0">
                             <div class="service-icon">
-                                <i class="fa fa-solar-panel fa-3x"></i>
+                                <span style="font-size: 50px">🛍️</span>
                             </div>
-                            <h4 class="mb-3">Solar Panels</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
+                            <h4 class="mb-3">Local Product Marketplace</h4>
+                            <p>Discover a wide range of quality products from trusted local sellers in one convenient
+                                platform.</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-2.jpg') }}"
-                            alt="">
+                        <img class="img-fluid" src="{{ asset('landing_assets/img/service2.jpg') }}" alt="">
                         <div class="position-relative p-4 pt-0">
                             <div class="service-icon">
-                                <i class="fa fa-wind fa-3x"></i>
+                                <span style="font-size: 50px">🚚</span>
                             </div>
-                            <h4 class="mb-3">Wind Turbines</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
+                            <h4 class="mb-3">Fast & Reliable Delivery</h4>
+                            <p>Orders are processed quickly with an efficient delivery system and real-time tracking.
+                            </p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-3.jpg') }}"
-                            alt="">
+                        <img class="img-fluid" src="{{ asset('landing_assets/img/service3.jpg') }}" alt="">
                         <div class="position-relative p-4 pt-0">
                             <div class="service-icon">
-                                <i class="fa fa-lightbulb fa-3x"></i>
+                                <span style="font-size: 50px">📊</span>
                             </div>
-                            <h4 class="mb-3">Hydropower Plants</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-4.jpg') }}"
-                            alt="">
-                        <div class="position-relative p-4 pt-0">
-                            <div class="service-icon">
-                                <i class="fa fa-solar-panel fa-3x"></i>
-                            </div>
-                            <h4 class="mb-3">Solar Panels</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-5.jpg') }}"
-                            alt="">
-                        <div class="position-relative p-4 pt-0">
-                            <div class="service-icon">
-                                <i class="fa fa-wind fa-3x"></i>
-                            </div>
-                            <h4 class="mb-3">Wind Turbines</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="service-item rounded overflow-hidden">
-                        <img class="img-fluid" src="{{ asset('landing_assets/img/img-600x400-6.jpg') }}"
-                            alt="">
-                        <div class="position-relative p-4 pt-0">
-                            <div class="service-icon">
-                                <i class="fa fa-lightbulb fa-3x"></i>
-                            </div>
-                            <h4 class="mb-3">Hydropower Plants</h4>
-                            <p>Stet stet justo dolor sed duo. Ut clita sea sit ipsum diam lorem diam.</p>
-                            <a class="small fw-medium" href="">Read More<i
-                                    class="fa fa-arrow-right ms-2"></i></a>
+                            <h4 class="mb-3">Smart Business Management</h4>
+                            <p>Easily manage your products and orders with an intelligent dashboard to grow your
+                                business.</p>
                         </div>
                     </div>
                 </div>
@@ -293,17 +250,19 @@
                 <div class="col-lg-6 ps-lg-0 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">
                     <div class="position-relative h-100">
                         <img class="position-absolute img-fluid w-100 h-100"
-                            src="{{ asset('landing_assets/img/quote.jpg') }}" style="object-fit: cover;"
+                            src="{{ asset('landing_assets/img/hero2.png') }}" style="object-fit: cover;"
                             alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 quote-text py-5 wow fadeIn" data-wow-delay="0.5s">
                     <div class="p-lg-5 pe-lg-0">
-                        <h6 class="text-primary">Free Quote</h6>
-                        <h1 class="mb-4">Get A Free Quote</h1>
-                        <p class="mb-4 pb-2">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam
-                            amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo erat
-                            amet</p>
+                        <h6 class="text-primary">Start Selling Today</h6>
+                        <h1 class="mb-4">Grow Your Business with Us</h1>
+                        <p class="mb-4 pb-2">
+                            Join our platform and connect with more customers easily. Manage your products, track
+                            orders, and grow your business with a simple and powerful system designed for modern
+                            sellers.
+                        </p>
                         <form id="registerForm">
                             <div class="row g-3">
 
@@ -363,7 +322,7 @@
 
 
     <!-- Team Start -->
-    <div class="container-xxl pt-5">
+    <div class="container-xxl pt-5" id="team">
         <div class="container">
             <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
                 <h6 class="text-primary">Team Member</h6>
@@ -437,7 +396,7 @@
 
 
     <!-- Contact Start -->
-    <div class="container-fluid bg-light overflow-hidden px-lg-0" style="margin: 6rem 0;">
+    {{-- <div class="container-fluid bg-light overflow-hidden px-lg-0" style="margin: 6rem 0;">
         <div class="container contact px-lg-0">
             <div class="row g-0 mx-lg-0">
                 <div class="col-lg-6 contact-text py-5 wow fadeIn" data-wow-delay="0.5s">
@@ -492,15 +451,15 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- Contact End -->
 
 
     <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-body footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container-fluid bg-dark text-body footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s" id="contact">
         <div class="container py-5">
             <div class="row g-5">
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     <h5 class="text-white mb-4">Address</h5>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
@@ -516,52 +475,11 @@
                                 class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     <h5 class="text-white mb-4">Quick Links</h5>
-                    <a class="btn btn-link" href="">About Us</a>
-                    <a class="btn btn-link" href="">Contact Us</a>
-                    <a class="btn btn-link" href="">Our Services</a>
-                    <a class="btn btn-link" href="">Terms & Condition</a>
-                    <a class="btn btn-link" href="">Support</a>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Project Gallery</h5>
-                    <div class="row g-2">
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-1.jpg') }}"
-                                alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-2.jpg') }}"
-                                alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-3.jpg') }}"
-                                alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-4.jpg') }}"
-                                alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-5.jpg') }}"
-                                alt="">
-                        </div>
-                        <div class="col-4">
-                            <img class="img-fluid rounded" src="{{ asset('landing_assets/img/gallery-6.jpg') }}"
-                                alt="">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Newsletter</h5>
-                    <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                    <div class="position-relative mx-auto" style="max-width: 400px;">
-                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text"
-                            placeholder="Your email">
-                        <button type="button"
-                            class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
-                    </div>
+                    <a class="btn btn-link" href="#about">About Us</a>
+                    <a class="btn btn-link" href="#contact">Contact Us</a>
+                    <a class="btn btn-link" href="#service">Our Services</a>
                 </div>
             </div>
         </div>
@@ -569,10 +487,10 @@
             <div class="copyright">
                 <div class="row">
                     <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a href="#">Your Site Name</a>, All Right Reserved.
+                        &copy; <a href="#">Smart Inventory</a>, All Right Reserved.
                     </div>
                     <div class="col-md-6 text-center text-md-end">
-                        Designed By <a href="https://htmlcodex.com">HTML Codex</a>
+                        Designed By <a href="#">SMA N 1 Medan</a>
                     </div>
                 </div>
             </div>

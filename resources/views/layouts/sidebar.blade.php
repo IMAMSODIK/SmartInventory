@@ -1,7 +1,7 @@
 <div class="sidebar-wrapper" data-layout="stroke-svg">
     <div class="logo-wrapper">
         <a href="/dashboard">
-            <img class="img-fluid" style="width: 85px; margin-top: -10px"
+            <img class="img-fluid" style="width: 100px; margin-top: -30px"
                 src="{{ asset('dashboard_assets/assets/images/logo/logo.png') }}" alt="">
         </a>
         <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
@@ -48,6 +48,15 @@
                         <a class="sidebar-link sidebar-title link-nav" href="/profile-usaha">
                             <i class="fa fa-building text-white" aria-hidden="true"></i>
                             <span>Profile Usaha</span>
+                        </a>
+                    </li>
+                @endif
+
+                @if (auth()->user()->role == 'kurir')
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav" href="/profile-driver">
+                            <i class="fa fa-motorcycle text-white"></i>
+                            <span>Profile Driver</span>
                         </a>
                     </li>
                 @endif

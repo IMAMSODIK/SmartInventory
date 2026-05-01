@@ -166,7 +166,7 @@ body {
 }
 
 .tab.active {
-    background: linear-gradient(to right, #2980b9, #3498db);
+    background: linear-gradient(to right, #51CC82, #19cc61);
     color: white;
     box-shadow: 0 2px 5px rgba(41, 128, 185, 0.3);
 }
@@ -223,8 +223,8 @@ body {
 }
 
 .input-group input:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    border-color: #51CC82;
+    box-shadow: 0 0 0 3px rgba(33, 146, 42, 0.2);
     outline: none;
     background-color: white;
 }
@@ -235,7 +235,7 @@ body {
 }
 
 .forgot-password a {
-    color: #2980b9;
+    color: #51CC82;
     text-decoration: none;
     font-size: 14px;
     transition: all 0.2s;
@@ -243,7 +243,7 @@ body {
 
 .forgot-password a:hover {
     text-decoration: underline;
-    color: #1a5276;
+    color: #527f64;
 }
 
 .btn {
@@ -251,7 +251,7 @@ body {
     padding: 12px;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(to right, #2980b9, #3498db);
+    background: linear-gradient(to right, #51CC82, #19cc61);
     color: white;
     font-size: 16px;
     font-weight: 600;
@@ -261,7 +261,7 @@ body {
 }
 
 .btn:hover {
-    background: linear-gradient(to right, #2472a4, #2980b9);
+    background: linear-gradient(to right, #51CC82, #19cc61);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
 }

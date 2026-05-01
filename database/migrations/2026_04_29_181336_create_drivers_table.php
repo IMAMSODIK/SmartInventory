@@ -18,7 +18,13 @@ return new class extends Migration
             $table->string('vehicle_type')->nullable();
             $table->string('plate_number')->nullable();
 
-            $table->decimal('rating', 3,2)->default(0);
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
+
+            $table->boolean('is_online')->default(false); // 🔥 status aktif
+            $table->boolean('is_available')->default(true); // 🔥 siap ambil order
+
+            $table->decimal('rating', 3, 2)->default(0);
             $table->integer('total_delivery')->default(0);
             $table->timestamps();
         });

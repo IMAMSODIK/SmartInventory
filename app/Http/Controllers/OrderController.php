@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Alamat;
+use App\Models\Driver;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Produk;
+use App\Models\ProfileUsaha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -22,6 +24,26 @@ class OrderController extends Controller
         Config::$is3ds = config('midtrans.is_3ds');
     }
 
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        return sqrt(pow($lat1 - $lat2, 2) + pow($lon1 - $lon2, 2));
+    }
+
+    private function findNearestDriver($store)
+    {
+        return Driver::all()->map(function ($driver) use ($store) {
+
+            $distance = sqrt(
+                pow($store->latitude - $driver->latitude, 2) +
+                    pow($store->longitude - $driver->longitude, 2)
+            );
+
+            $driver->distance = $distance;
+
+            return $driver;
+        })->sortBy('distance')->first();
+    }
+
     public function checkout(Request $request)
     {
         $request->validate([
@@ -34,13 +56,14 @@ class OrderController extends Controller
 
         try {
 
-            $grossAmount = 0;
-            $itemDetails = [];
+            $buyer = Auth::user();
             $orderId = 'ORDER-' . Str::uuid();
 
-            $buyer = Auth::user();
+            $grossAmount = 0;
+            $shippingCost = 0;
+            $itemDetails = [];
 
-            // 🔥 WAJIB ADA
+            // 🔥 AMBIL ALAMAT DEFAULT
             $alamat = Alamat::where('user_id', $buyer->id)
                 ->where('is_default', true)
                 ->first();
@@ -51,7 +74,23 @@ class OrderController extends Controller
                 ], 422);
             }
 
-            // 🔥 CREATE ORDER
+            // 🔥 GROUP PRODUK PER TOKO
+            $grouped = [];
+
+            foreach ($request->items as $item) {
+
+                $produk = Produk::with('profileUsaha')->findOrFail($item['id']);
+
+                $storeId = $produk->profile_usaha_id;
+
+                $grouped[$storeId][] = [
+                    'produk' => $produk,
+                    'qty' => $item['qty'],
+                    'note' => $item['note'] ?? null
+                ];
+            }
+
+            // 🔥 BUAT ORDER
             $order = Order::create([
                 'order_id' => $orderId,
                 'buyer_id' => $buyer->id,
@@ -61,44 +100,70 @@ class OrderController extends Controller
                 'total' => 0,
             ]);
 
-            foreach ($request->items as $item) {
+            // 🔥 LOOP PER TOKO
+            foreach ($grouped as $storeId => $items) {
 
-                $produk = Produk::findOrFail($item['id']);
+                $store = ProfileUsaha::findOrFail($storeId);
 
-                $price = (int) $produk->price;
-                $qty = (int) $item['qty'];
+                // 🔥 HITUNG JARAK
+                $distance = $this->calculateDistance(
+                    $store->latitude,
+                    $store->longitude,
+                    $alamat->latitude,
+                    $alamat->longitude
+                );
 
-                $subtotal = $price * $qty;
-                $grossAmount += $subtotal;
+                // 🔥 ONGKIR (simple)
+                $ongkir = $distance * 2000; // 2rb/km
+                $shippingCost += $ongkir;
 
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'produk_id' => $produk->id,
-                    'nama_produk' => $produk->name,
-                    'harga' => $price,
-                    'qty' => $qty,
-                    'note' => $item['note'] ?? null
-                ]);
+                // 🔥 CARI DRIVER TERDEKAT
+                $driver = $this->findNearestDriver($store);
 
-                // 🔥 MIDTRANS
-                $itemDetails[] = [
-                    'id' => $produk->id,
-                    'price' => $price,
-                    'quantity' => $qty,
-                    'name' => $produk->name
-                ];
+                foreach ($items as $item) {
+
+                    $produk = $item['produk'];
+
+                    $price = (int) $produk->price;
+                    $qty = (int) $item['qty'];
+
+                    $subtotal = $price * $qty;
+                    $grossAmount += $subtotal;
+
+                    // 🔥 SIMPAN ORDER ITEM
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'produk_id' => $produk->id,
+                        'nama_produk' => $produk->name,
+                        'harga' => $price,
+                        'qty' => $qty,
+                        'note' => $item['note'],
+                        'driver_id' => $driver?->id, // 🔥 driver assign
+                    ]);
+
+                    // 🔥 MIDTRANS ITEM
+                    $itemDetails[] = [
+                        'id' => $produk->id,
+                        'price' => $price,
+                        'quantity' => $qty,
+                        'name' => $produk->name
+                    ];
+                }
             }
 
             // 🔥 UPDATE TOTAL
+            $total = $grossAmount + $shippingCost;
+
             $order->update([
-                'total' => $grossAmount
+                'total' => $total,
+                'shipping_cost' => $shippingCost
             ]);
 
-            // 🔥 PARAM MIDTRANS
+            // 🔥 MIDTRANS PARAM
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
-                    'gross_amount' => $grossAmount,
+                    'gross_amount' => $total,
                 ],
                 'item_details' => $itemDetails,
                 'customer_details' => [

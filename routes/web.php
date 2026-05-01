@@ -3,6 +3,7 @@
 use App\Http\Controllers\AlamatController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\OrderController;
@@ -62,6 +63,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alamat/list', [AlamatController::class, 'list']);
     Route::post('/alamat/set-default/{id}', [AlamatController::class, 'setDefault']);
     Route::delete('/alamat/delete/{id}', [AlamatController::class, 'delete']);
+
+    Route::post('/driver/toggle-status', [DriverController::class, 'toggleStatus']);
+    Route::get('/driver/status', [DriverController::class, 'getStatus']);
+
+    Route::get('/profile-driver', [DriverController::class, 'index']);
+    Route::post('/profile-driver', [DriverController::class, 'update']);
+    Route::post('/driver/update-location', [DriverController::class, 'updateLocation']);
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

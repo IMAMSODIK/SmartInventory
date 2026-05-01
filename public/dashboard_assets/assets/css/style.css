@@ -115,7 +115,7 @@
 
  */
 :root {
-  --theme-deafult: #4274BA;
+  --theme-deafult: #51CC82;
   --theme-secondary: #FE6A49;
   --light-background: rgba(242, 243, 247, 0.7);
   --body-font-color: #86909C;
@@ -2876,7 +2876,7 @@ table tbody .border-bottom-warning td {
 }
 
 .border-b-primary {
-  border-bottom: 1px solid #4274BA !important;
+  border-bottom: 1px solid #51CC82 !important;
 }
 
 .b-l-primary {
