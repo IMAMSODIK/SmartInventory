@@ -563,7 +563,7 @@
             }
 
             function formatRupiah(angka) {
-                return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                return new Intl.NumberFormat('id-ID').format(Number(angka) || 0);
             }
 
             $(document).on('click', '.qty-plus', function() {
@@ -629,17 +629,17 @@
                         Swal.fire({
                             title: 'Konfirmasi Pembayaran',
                             html: `
-            <div style="text-align:left">
-                <p>🚚 <b>Driver:</b> ${driver.name}</p>
-                <p>⭐ Rating: ${driver.rating}</p>
-                <p>🚗 Kendaraan: ${driver.vehicle}</p>
+                                <div style="text-align:left">
+                                    <p>🚚 <b>Driver:</b> ${driver.name}</p>
+                                    <p>⭐ Rating: ${driver.rating}</p>
+                                    <p>🚗 Kendaraan: ${driver.vehicle}</p>
 
-                <hr>
+                                    <hr>
 
-                <p>📦 Ongkir: <b>Rp ${formatRupiah(ongkir)}</b></p>
-                <p>💰 Total: <b>Rp ${formatRupiah(total)}</b></p>
-            </div>
-        `,
+                                    <p>📦 Ongkir: <b>Rp ${formatRupiah(ongkir)}</b></p>
+                                    <p>💰 Total: <b>Rp ${formatRupiah(total)}</b></p>
+                                </div>
+                            `,
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Bayar Sekarang',
