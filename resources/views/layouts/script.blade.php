@@ -43,6 +43,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    let lastOrderHash = null;
     function loadDriverOrders() {
         $.get('/driver/incoming-order', function(res) {
 
@@ -51,7 +52,6 @@
                 return;
             }
 
-            // 🔥 buat hash dari data
             let currentHash = JSON.stringify(res.data);
 
             // 🔥 kalau sama, jangan render ulang
