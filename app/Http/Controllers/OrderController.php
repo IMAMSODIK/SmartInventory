@@ -159,17 +159,12 @@ class OrderController extends Controller
                 }
             }
 
-            // 🔥 UPDATE TOTAL
             $total = $grossAmount + $shippingCost;
 
             $order->update([
                 'total' => $total,
-                'shipping_cost' => $shippingCost
+                'shipping_cost' => round($shippingCost)
             ]);
-
-            dd($shippingCost);
-
-            // 🔥 MIDTRANS PARAM
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
