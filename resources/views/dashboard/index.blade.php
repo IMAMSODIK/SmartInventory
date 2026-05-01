@@ -32,33 +32,70 @@
         <div class="container-fluid">
             @if (auth()->user()->role == 'kurir')
                 <div class="row">
-                    <div class="col-xl-3 col-sm-6">
-                    <div class="card o-hidden small-widget">
-                      <div class="card-body total-project border-b-primary border-2"><span class="f-light f-w-500 f-14">Total Project</span>
-                        <div class="project-details"> 
-                          <div class="project-counter"> 
-                            <h2 class="f-w-600">1,523</h2><span class="f-12 f-w-400">(This month)</span>
-                          </div>
-                          <div class="product-sub bg-primary-light">
-                            <svg class="invoice-icon">
-                              <use href="{{asset('dashboard_assets/assets/svg/icon-sprite.svg#color-swatch')}}"></use>
-                            </svg>
-                          </div>
+                    <div class="col-xl-4 col-sm-12">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-project border-b-primary border-2"><span
+                                    class="f-light f-w-500 f-14">Total Project</span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">1,523</h2><span class="f-12 f-w-400">(This month)</span>
+                                    </div>
+                                    <div class="product-sub bg-primary-light">
+                                        <svg class="invoice-icon">
+                                            <use
+                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#color-swatch') }}">
+                                            </use>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                </ul>
+                            </div>
                         </div>
-                        <ul class="bubbles">
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                          <li class="bubble"></li>
-                        </ul>
-                      </div>
                     </div>
-                  </div>
+                </div>
+
+                <div class="row" id="incoming-order-wrapper" style="display:none;">
+                    <div class="col-12">
+                        <div class="card border border-warning shadow-sm">
+
+                            <div class="card-body">
+
+                                <h5 class="text-warning mb-3">
+                                    🚚 Order Masuk!
+                                </h5>
+
+                                <p><b>Order ID:</b> <span id="order-id"></span></p>
+                                <p><b>Customer:</b> <span id="customer-name"></span></p>
+                                <p><b>Alamat:</b> <span id="customer-address"></span></p>
+
+                                <hr>
+
+                                <div id="order-items"></div>
+
+                                <div class="mt-3 d-flex gap-2">
+                                    <button class="btn btn-success" id="btn-start-delivery">
+                                        Mulai Antar
+                                    </button>
+
+                                    <button class="btn btn-secondary" id="btn-hide-order">
+                                        Sembunyikan
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             @else
                 <div class="row">
@@ -127,12 +164,14 @@
                                                     <div id="apexchartsw1evsj28"
                                                         class="apexcharts-canvas apexchartsw1evsj28 apexcharts-theme-light"
                                                         style="width: 145px; height: 120px;"><svg id="SvgjsSvg1405"
-                                                            width="145" height="120" xmlns="http://www.w3.org/2000/svg"
-                                                            version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                            width="145" height="120"
+                                                            xmlns="http://www.w3.org/2000/svg" version="1.1"
+                                                            xmlns:xlink="http://www.w3.org/1999/xlink"
                                                             xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg"
                                                             xmlns:data="ApexChartsNS" transform="translate(0, -20)"
                                                             style="background: transparent;">
-                                                            <g id="SvgjsG1407" class="apexcharts-inner apexcharts-graphical"
+                                                            <g id="SvgjsG1407"
+                                                                class="apexcharts-inner apexcharts-graphical"
                                                                 transform="translate(14.075, 30)">
                                                                 <defs id="SvgjsDefs1406">
                                                                     <linearGradient id="SvgjsLinearGradient1410"
@@ -838,9 +877,9 @@
                                                                             class="apexcharts-gridline">
                                                                         </line>
                                                                         <line id="SvgjsLine1559" x1="0"
-                                                                            y1="60" x2="181" y2="60"
-                                                                            stroke="#e0e0e0" stroke-dasharray="0"
-                                                                            stroke-linecap="butt"
+                                                                            y1="60" x2="181"
+                                                                            y2="60" stroke="#e0e0e0"
+                                                                            stroke-dasharray="0" stroke-linecap="butt"
                                                                             class="apexcharts-gridline">
                                                                         </line>
                                                                     </g>

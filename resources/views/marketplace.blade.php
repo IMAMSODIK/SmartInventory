@@ -610,7 +610,6 @@
                     note: i.note
                 }));
 
-                // 🔥 SHOW LOADING
                 $('#loadingCheckout').removeClass('hidden');
 
                 $.ajax({
@@ -622,37 +621,55 @@
                     },
                     success: function(res) {
 
-                        // 🔥 HIDE LOADING
-                        $('#loadingCheckout').addClass('hidden');
+                        let ongkir = res.ongkir;
+                        let total = res.total;
+                        let driver = res.driver;
 
-                        // 🔥 TAMPILKAN TOTAL + ONGKIR
-                        let total = formatRupiah(res.total);
-                        let ongkir = formatRupiah(res.shipping_cost);
+                        // tampilkan popup modern
+                        Swal.fire({
+                            title: 'Konfirmasi Pembayaran',
+                            html: `
+            <div style="text-align:left">
+                <p>🚚 <b>Driver:</b> ${driver.name}</p>
+                <p>⭐ Rating: ${driver.rating}</p>
+                <p>🚗 Kendaraan: ${driver.vehicle}</p>
 
-                        let confirmPay = confirm(
-                            `Ongkir: Rp ${ongkir}\nTotal bayar: Rp ${total}\n\nLanjutkan pembayaran?`
-                        );
+                <hr>
 
-                        if (!confirmPay) return;
+                <p>📦 Ongkir: <b>Rp ${formatRupiah(ongkir)}</b></p>
+                <p>💰 Total: <b>Rp ${formatRupiah(total)}</b></p>
+            </div>
+        `,
+                            icon: 'info',
+                            showCancelButton: true,
+                            confirmButtonText: 'Bayar Sekarang',
+                            cancelButtonText: 'Batal',
+                            confirmButtonColor: '#f97316'
+                        }).then((result) => {
 
-                        orderIdGlobal = res.order_id;
+                            if (result.isConfirmed) {
 
-                        snap.pay(res.snap_token, {
-                            onSuccess: function() {
-                                snap.hide();
-                                showPaymentPopup('success');
+                                orderIdGlobal = res.order_id;
 
-                                cart = [];
-                                updateCartBadge();
-                            },
-                            onPending: function() {
-                                startCheckingStatus(res.order_id);
-                            },
-                            onError: function() {
-                                showPaymentPopup('failed');
+                                snap.pay(res.snap_token, {
+                                    onSuccess: function() {
+                                        snap.hide();
+                                        showPaymentPopup('success');
+
+                                        cart = [];
+                                        updateCartBadge();
+                                    },
+                                    onPending: function() {
+                                        startCheckingStatus(res.order_id);
+                                    },
+                                    onError: function() {
+                                        showPaymentPopup('failed');
+                                    }
+                                });
+
                             }
-                        });
 
+                        });
                     },
                     error: function(err) {
 

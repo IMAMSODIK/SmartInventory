@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/driver/toggle-status', [DriverController::class, 'toggleStatus']);
     Route::get('/driver/status', [DriverController::class, 'getStatus']);
+    Route::get('/driver/incoming-order', [DriverController::class, 'getIncomingOrder']);
 
     Route::get('/profile-driver', [DriverController::class, 'index']);
     Route::post('/profile-driver', [DriverController::class, 'update']);

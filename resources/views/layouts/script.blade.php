@@ -42,6 +42,62 @@
 <script src="{{ asset('dashboard_assets/assets/js/theme-customizer/customizer.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    function loadIncomingOrder() {
+        $.get('/driver/incoming-order', function(res) {
+
+            if (!res.status) {
+                $('#incoming-order-wrapper').hide();
+                return;
+            }
+
+            let data = res.data;
+
+            $('#incoming-order-wrapper').fadeIn();
+
+            $('#order-id').text(data.order.order_id);
+            $('#customer-name').text(data.order.buyer.name);
+            $('#customer-address').text(data.order.alamat.full_address);
+
+            let itemsHtml = `
+            <div class="border rounded p-2 mb-2">
+                <b>${data.nama_produk}</b><br>
+                Qty: ${data.qty}
+            </div>
+        `;
+
+            $('#order-items').html(itemsHtml);
+
+            // simpan id untuk tombol
+            $('#btn-start-delivery').data('id', data.id);
+        });
+    }
+
+    $(document).on('click', '#btn-start-delivery', function() {
+
+        let id = $(this).data('id');
+
+        $.post('/driver/start/' + id, {
+            _token: $('meta[name="csrf-token"]').attr('content')
+        }, function(res) {
+
+            toastr.success('Pengantaran dimulai');
+
+            $('#incoming-order-wrapper').fadeOut();
+
+        });
+    });
+
+    $('#btn-hide-order').click(function() {
+        $('#incoming-order-wrapper').fadeOut();
+    });
+</script>
+
+<script>
+    setInterval(() => {
+        loadIncomingOrder();
+    }, 3000);
+</script>
 
 <script>
     let trackingInterval = null;

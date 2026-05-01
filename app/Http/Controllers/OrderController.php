@@ -55,7 +55,7 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-
+            $driverInfo = null;
             $buyer = Auth::user();
             $orderId = 'ORDER-' . Str::uuid();
 
@@ -63,7 +63,6 @@ class OrderController extends Controller
             $shippingCost = 0;
             $itemDetails = [];
 
-            // 🔥 AMBIL ALAMAT DEFAULT
             $alamat = Alamat::where('user_id', $buyer->id)
                 ->where('is_default', true)
                 ->first();
@@ -74,7 +73,6 @@ class OrderController extends Controller
                 ], 422);
             }
 
-            // 🔥 GROUP PRODUK PER TOKO
             $grouped = [];
 
             foreach ($request->items as $item) {
@@ -90,7 +88,6 @@ class OrderController extends Controller
                 ];
             }
 
-            // 🔥 BUAT ORDER
             $order = Order::create([
                 'order_id' => $orderId,
                 'buyer_id' => $buyer->id,
@@ -100,12 +97,10 @@ class OrderController extends Controller
                 'total' => 0,
             ]);
 
-            // 🔥 LOOP PER TOKO
             foreach ($grouped as $storeId => $items) {
 
                 $store = ProfileUsaha::findOrFail($storeId);
 
-                // 🔥 HITUNG JARAK
                 $distance = $this->calculateDistance(
                     $store->latitude,
                     $store->longitude,
@@ -113,12 +108,25 @@ class OrderController extends Controller
                     $alamat->longitude
                 );
 
-                // 🔥 ONGKIR (simple)
                 $ongkir = $distance * 2000; // 2rb/km
                 $shippingCost += round($ongkir);
 
-                // 🔥 CARI DRIVER TERDEKAT
                 $driver = $this->findNearestDriver($store);
+
+                if (!$driver) {
+                    DB::rollBack();
+                    return response()->json([
+                        'message' => 'Tidak ada driver di area ini'
+                    ], 422);
+                }
+
+                if (!$driverInfo) {
+                    $driverInfo = [
+                        'name' => $driver->user->name ?? 'Driver',
+                        'rating' => $driver->rating,
+                        'vehicle' => $driver->vehicle_type
+                    ];
+                }
 
                 if (!$driver) {
                     DB::rollBack(); // penting biar gak ada data nyangkut
@@ -184,8 +192,9 @@ class OrderController extends Controller
             return response()->json([
                 'snap_token' => $snapToken,
                 'order_id' => $orderId,
-                'total' => $total,
-                'shipping_cost' => $shippingCost
+                'ongkir' => round($shippingCost),
+                'total' => round($total),
+                'driver' => $driverInfo
             ]);
         } catch (\Exception $e) {
 

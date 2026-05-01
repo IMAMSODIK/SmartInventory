@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Driver;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use App\Models\OrderItem;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -155,7 +156,7 @@ class DriverController extends Controller
                         'message' => 'Lokasi tidak berubah signifikan'
                     ]);
                 }
-            }else{
+            } else {
                 $driver->update([
                     'latitude' => $request->lat,
                     'longitude' => $request->lng,
@@ -171,6 +172,35 @@ class DriverController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal update lokasi',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getIncomingOrder()
+    {
+        try {
+            $driver = auth()->user()->driver;
+
+            $orderItem = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
+                ->where('driver_id', $driver->id)
+                ->where('delivery_status', 'accepted')
+                ->latest()
+                ->first();
+
+            if (!$orderItem) {
+                return response()->json([
+                    'status' => false
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+                'data' => $orderItem
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Gagal ambil order',
                 'error' => $e->getMessage()
             ], 500);
         }
