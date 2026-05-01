@@ -115,7 +115,7 @@ class OrderController extends Controller
 
                 // 🔥 ONGKIR (simple)
                 $ongkir = $distance * 2000; // 2rb/km
-                $shippingCost += $ongkir;
+                $shippingCost += round($ongkir);
 
                 // 🔥 CARI DRIVER TERDEKAT
                 $driver = $this->findNearestDriver($store);
@@ -163,7 +163,7 @@ class OrderController extends Controller
 
             $order->update([
                 'total' => $total,
-                'shipping_cost' => round($shippingCost)
+                'shipping_cost' => $shippingCost
             ]);
             $params = [
                 'transaction_details' => [
