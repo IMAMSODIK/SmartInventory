@@ -120,6 +120,14 @@ class OrderController extends Controller
                 // 🔥 CARI DRIVER TERDEKAT
                 $driver = $this->findNearestDriver($store);
 
+                if (!$driver) {
+                    DB::rollBack(); // penting biar gak ada data nyangkut
+
+                    return response()->json([
+                        'message' => 'Tidak ada driver di area ini'
+                    ], 422);
+                }
+
                 foreach ($items as $item) {
 
                     $produk = $item['produk'];
@@ -178,7 +186,9 @@ class OrderController extends Controller
 
             return response()->json([
                 'snap_token' => $snapToken,
-                'order_id' => $orderId
+                'order_id' => $orderId,
+                'total' => $total,
+                'shipping_cost' => $shippingCost
             ]);
         } catch (\Exception $e) {
 

@@ -188,6 +188,14 @@
         </div>
     </div>
 
+    <div id="loadingCheckout"
+        class="fixed inset-0 hidden z-50 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white px-6 py-4 rounded-xl text-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-3"></div>
+            <p class="text-sm text-gray-600">Mencari driver & menghitung ongkir...</p>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -602,6 +610,9 @@
                     note: i.note
                 }));
 
+                // 🔥 SHOW LOADING
+                $('#loadingCheckout').removeClass('hidden');
+
                 $.ajax({
                     url: '/checkout',
                     method: 'POST',
@@ -611,34 +622,47 @@
                     },
                     success: function(res) {
 
+                        // 🔥 HIDE LOADING
+                        $('#loadingCheckout').addClass('hidden');
+
+                        // 🔥 TAMPILKAN TOTAL + ONGKIR
+                        let total = formatRupiah(res.total);
+                        let ongkir = formatRupiah(res.shipping_cost);
+
+                        let confirmPay = confirm(
+                            `Ongkir: Rp ${ongkir}\nTotal bayar: Rp ${total}\n\nLanjutkan pembayaran?`
+                        );
+
+                        if (!confirmPay) return;
+
                         orderIdGlobal = res.order_id;
 
                         snap.pay(res.snap_token, {
                             onSuccess: function() {
-                                // tutup popup snap
                                 snap.hide();
                                 showPaymentPopup('success');
 
                                 cart = [];
                                 updateCartBadge();
                             },
-
                             onPending: function() {
                                 startCheckingStatus(res.order_id);
                             },
-
                             onError: function() {
                                 showPaymentPopup('failed');
-                            },
-
-                            onClose: function() {
-                                console.log('popup ditutup');
                             }
                         });
 
                     },
-                    error: function() {
-                        toastr.error('Checkout gagal');
+                    error: function(err) {
+
+                        $('#loadingCheckout').addClass('hidden');
+
+                        if (err.responseJSON?.message) {
+                            toastr.error(err.responseJSON.message);
+                        } else {
+                            toastr.error('Checkout gagal');
+                        }
                     }
                 });
             });
