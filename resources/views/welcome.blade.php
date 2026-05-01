@@ -96,6 +96,8 @@
             </div>
             <a href="#register" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Join Now<i
                     class="fa fa-arrow-right ms-3"></i></a>
+            <a href="/marketplace" class="btn btn-warning rounded-0 py-4 px-lg-5 d-none d-lg-block text-white">Shop Now<i
+                    class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </nav>
     <!-- Navbar End -->

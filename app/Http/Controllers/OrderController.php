@@ -167,6 +167,8 @@ class OrderController extends Controller
                 'shipping_cost' => $shippingCost
             ]);
 
+            dd($shippingCost);
+
             // 🔥 MIDTRANS PARAM
             $params = [
                 'transaction_details' => [
