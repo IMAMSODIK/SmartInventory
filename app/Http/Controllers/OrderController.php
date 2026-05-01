@@ -26,22 +26,52 @@ class OrderController extends Controller
 
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
     {
-        return sqrt(pow($lat1 - $lat2, 2) + pow($lon1 - $lon2, 2));
+        $earthRadius = 6371;
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 
     private function findNearestDriver($store)
     {
-        return Driver::all()->map(function ($driver) use ($store) {
+        $drivers = Driver::with('user')
+            ->where('is_online', true)
+            ->where('is_available', true)
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get();
 
-            $distance = sqrt(
-                pow($store->latitude - $driver->latitude, 2) +
-                    pow($store->longitude - $driver->longitude, 2)
+        if ($drivers->isEmpty()) {
+            return null;
+        }
+
+        $nearest = null;
+        $minDistance = PHP_FLOAT_MAX;
+
+        foreach ($drivers as $driver) {
+
+            $distance = $this->calculateDistance(
+                $store->latitude,
+                $store->longitude,
+                $driver->latitude,
+                $driver->longitude
             );
 
-            $driver->distance = $distance;
+            if ($distance < $minDistance) {
+                $minDistance = $distance;
+                $nearest = $driver;
+            }
+        }
 
-            return $driver;
-        })->sortBy('distance')->first();
+        return $nearest;
     }
 
     public function checkout(Request $request)
@@ -55,14 +85,16 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            $driverInfo = null;
+
             $buyer = Auth::user();
             $orderId = 'ORDER-' . Str::uuid();
 
             $grossAmount = 0;
             $shippingCost = 0;
             $itemDetails = [];
+            $driverInfo = null;
 
+            // ✅ Ambil alamat default
             $alamat = Alamat::where('user_id', $buyer->id)
                 ->where('is_default', true)
                 ->first();
@@ -73,6 +105,7 @@ class OrderController extends Controller
                 ], 422);
             }
 
+            // ✅ GROUP PER TOKO
             $grouped = [];
 
             foreach ($request->items as $item) {
@@ -88,6 +121,7 @@ class OrderController extends Controller
                 ];
             }
 
+            // ✅ CREATE ORDER
             $order = Order::create([
                 'order_id' => $orderId,
                 'buyer_id' => $buyer->id,
@@ -97,10 +131,12 @@ class OrderController extends Controller
                 'total' => 0,
             ]);
 
+            // 🔥 LOOP PER TOKO
             foreach ($grouped as $storeId => $items) {
 
                 $store = ProfileUsaha::findOrFail($storeId);
 
+                // 🔥 HITUNG JARAK (KM)
                 $distance = $this->calculateDistance(
                     $store->latitude,
                     $store->longitude,
@@ -108,32 +144,32 @@ class OrderController extends Controller
                     $alamat->longitude
                 );
 
-                $ongkir = $distance * 2000; // 2rb/km
-                $shippingCost += round($ongkir);
+                // 🔥 ONGKIR
+                $ongkir = round($distance * 2000);
+                $shippingCost += $ongkir;
 
+                // 🔥 DRIVER TERDEKAT
                 $driver = $this->findNearestDriver($store);
 
                 if (!$driver) {
                     DB::rollBack();
                     return response()->json([
-                        'message' => 'Tidak ada driver di area ini'
+                        'message' => 'Tidak ada driver tersedia di area ini'
                     ], 422);
                 }
 
+                // 🔥 LOCK DRIVER
+                $driver->update([
+                    'is_available' => false
+                ]);
+
+                // 🔥 INFO DRIVER (ambil 1 saja)
                 if (!$driverInfo) {
                     $driverInfo = [
                         'name' => $driver->user->name ?? 'Driver',
                         'rating' => $driver->rating,
                         'vehicle' => $driver->vehicle_type
                     ];
-                }
-
-                if (!$driver) {
-                    DB::rollBack(); // penting biar gak ada data nyangkut
-
-                    return response()->json([
-                        'message' => 'Tidak ada driver di area ini'
-                    ], 422);
                 }
 
                 foreach ($items as $item) {
@@ -146,7 +182,6 @@ class OrderController extends Controller
                     $subtotal = $price * $qty;
                     $grossAmount += $subtotal;
 
-                    // 🔥 SIMPAN ORDER ITEM
                     OrderItem::create([
                         'order_id' => $order->id,
                         'produk_id' => $produk->id,
@@ -154,10 +189,10 @@ class OrderController extends Controller
                         'harga' => $price,
                         'qty' => $qty,
                         'note' => $item['note'],
-                        'driver_id' => $driver?->id, // 🔥 driver assign
+                        'driver_id' => $driver->id,
+                        'delivery_status' => 'assigned' // 🔥 penting
                     ]);
 
-                    // 🔥 MIDTRANS ITEM
                     $itemDetails[] = [
                         'id' => $produk->id,
                         'price' => $price,
@@ -167,12 +202,15 @@ class OrderController extends Controller
                 }
             }
 
-            $total = $grossAmount + $shippingCost;
+            // 🔥 TOTAL
+            $total = round($grossAmount + $shippingCost);
 
             $order->update([
                 'total' => $total,
                 'shipping_cost' => $shippingCost
             ]);
+
+            // 🔥 MIDTRANS
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
@@ -192,8 +230,8 @@ class OrderController extends Controller
             return response()->json([
                 'snap_token' => $snapToken,
                 'order_id' => $orderId,
-                'ongkir' => round($shippingCost),
-                'total' => round($total),
+                'ongkir' => $shippingCost,
+                'total' => $total,
                 'driver' => $driverInfo
             ]);
         } catch (\Exception $e) {

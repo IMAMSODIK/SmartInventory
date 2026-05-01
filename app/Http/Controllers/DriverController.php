@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Driver;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DriverController extends Controller
 {
@@ -201,6 +203,82 @@ class DriverController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Gagal ambil order',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function shippingOrder($orderId)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $driver = auth()->user()->driver;
+
+            OrderItem::where('order_id', $orderId)
+                ->where('driver_id', $driver->id)
+                ->update([
+                    'delivery_status' => 'shipping'
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Order sedang dikirim'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Gagal proses kirim',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function completeOrder($orderId)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $driver = auth()->user()->driver;
+
+            OrderItem::where('order_id', $orderId)
+                ->where('driver_id', $driver->id)
+                ->update([
+                    'delivery_status' => 'delivered'
+                ]);
+
+            // 🔥 cek semua item selesai
+            $allDone = OrderItem::where('order_id', $orderId)
+                ->where('delivery_status', '!=', 'delivered')
+                ->count();
+
+            if ($allDone == 0) {
+                Order::where('id', $orderId)->update([
+                    'status' => 'delivered'
+                ]);
+            }
+
+            // 🔥 driver free lagi
+            $driver->update([
+                'is_available' => true
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Order selesai'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Gagal menyelesaikan',
                 'error' => $e->getMessage()
             ], 500);
         }

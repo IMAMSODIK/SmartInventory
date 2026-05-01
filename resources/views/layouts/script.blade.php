@@ -43,48 +43,78 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    function loadIncomingOrder() {
+    function loadDriverOrders() {
         $.get('/driver/incoming-order', function(res) {
 
             if (!res.status) {
-                $('#incoming-order-wrapper').hide();
+                $('#driverOrders').html('<p>Tidak ada order</p>');
                 return;
             }
 
-            let data = res.data;
+            let html = '';
 
-            $('#incoming-order-wrapper').fadeIn();
+            Object.values(res.data).forEach(group => {
 
-            $('#order-id').text(data.order.order_id);
-            $('#customer-name').text(data.order.buyer.name);
-            $('#customer-address').text(data.order.alamat.full_address);
+                let order = group[0].order;
+                let status = group[0].delivery_status;
 
-            let itemsHtml = `
-            <div class="border rounded p-2 mb-2">
-                <b>${data.nama_produk}</b><br>
-                Qty: ${data.qty}
-            </div>
-        `;
+                html += `
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
 
-            $('#order-items').html(itemsHtml);
+                    <h5>Order: ${order.order_id}</h5>
+                    <p>Customer: ${order.buyer.name}</p>
+                    <p>Alamat: ${order.alamat.full_address}</p>
 
-            // simpan id untuk tombol
-            $('#btn-start-delivery').data('id', data.id);
+                    <hr>
+            `;
+
+                group.forEach(item => {
+                    html += `<p>${item.nama_produk} x ${item.qty}</p>`;
+                });
+
+                html += `<div class="mt-3">`;
+
+                if (status === 'accepted') {
+                    html += `
+                    <button class="btn btn-warning btn-shipping" data-id="${order.id}">
+                        🚚 Kirim Sekarang
+                    </button>
+                `;
+                }
+
+                if (status === 'shipping') {
+                    html += `
+                    <button class="btn btn-success btn-complete" data-id="${order.id}">
+                        ✅ Selesaikan
+                    </button>
+                `;
+                }
+
+                html += `</div></div></div>`;
+            });
+
+            $('#driverOrders').html(html);
         });
     }
 
-    $(document).on('click', '#btn-start-delivery', function() {
-
+    $(document).on('click', '.btn-shipping', function() {
         let id = $(this).data('id');
 
-        $.post('/driver/start/' + id, {
-            _token: $('meta[name="csrf-token"]').attr('content')
-        }, function(res) {
+        $.post('/driver/shipping/' + id, {
+            _token: csrf
+        }, function() {
+            loadDriverOrders();
+        });
+    });
 
-            toastr.success('Pengantaran dimulai');
+    $(document).on('click', '.btn-complete', function() {
+        let id = $(this).data('id');
 
-            $('#incoming-order-wrapper').fadeOut();
-
+        $.post('/driver/complete/' + id, {
+            _token: csrf
+        }, function() {
+            loadDriverOrders();
         });
     });
 
@@ -95,8 +125,8 @@
 
 <script>
     setInterval(() => {
-        loadIncomingOrder();
-    }, 3000);
+        loadDriverOrders();
+    }, 5000);
 </script>
 
 <script>

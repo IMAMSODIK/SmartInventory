@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="row" id="incoming-order-wrapper" style="display:none;">
+                <div class="row" id="driverOrders">
                     <div class="col-12">
                         <div class="card border border-warning shadow-sm">
 
