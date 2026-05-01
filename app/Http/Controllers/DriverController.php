@@ -182,23 +182,23 @@ class DriverController extends Controller
     public function getIncomingOrder()
     {
         try {
+
             $driver = auth()->user()->driver;
 
-            $orderItem = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
-                ->where('driver_id', $driver->id)
-                ->where('delivery_status', 'accepted')
-                ->latest()
-                ->first();
-
-            if (!$orderItem) {
-                return response()->json([
-                    'status' => false
-                ]);
+            if (!$driver) {
+                return response()->json(['status' => false]);
             }
 
+            $orders = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
+                ->where('driver_id', $driver->id)
+                ->whereIn('delivery_status', ['accepted', 'shipping'])
+                ->latest()
+                ->get()
+                ->groupBy('order_id');
+
             return response()->json([
-                'status' => true,
-                'data' => $orderItem
+                'status' => $orders->isNotEmpty(),
+                'data' => $orders
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -51,6 +51,16 @@
                 return;
             }
 
+            // 🔥 buat hash dari data
+            let currentHash = JSON.stringify(res.data);
+
+            // 🔥 kalau sama, jangan render ulang
+            if (currentHash === lastOrderHash) {
+                return;
+            }
+
+            lastOrderHash = currentHash;
+
             let html = '';
 
             Object.values(res.data).forEach(group => {
