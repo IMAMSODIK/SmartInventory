@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'pedagang', 'pembeli', 'kurir'])->default('pembeli');
             $table->string('foto')->nullable();
             $table->string('phone')->nullable();
-            $table->boolean('status')->default(0);
+            $table->boolean('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });

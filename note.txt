@@ -39,3 +39,20 @@ Schema::create('orders', function (Blueprint $table) {
             $table->string('fraud_status')->nullable();
             $table->timestamps();
         });
+
+
+
+
+
+new alur
+
+perbaiki flow aplikasi (done)
+tambah status approval di tabel driver (done)
+error pada driver saat check status orderan (selalu tertimpa)
+data orderan masih belum muncul
+tambahakn detail penjual dan pembeli pada order aktif kurir
+statsitik
+sistem wd
+
+pedagang diapprove dari dagangan
+dirver di approve dari data driver

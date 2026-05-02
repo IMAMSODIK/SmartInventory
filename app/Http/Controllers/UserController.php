@@ -19,7 +19,30 @@ class UserController extends Controller
     public function data(Request $request)
     {
         try {
-            $users = User::latest()->where('status', $request->status)->get();
+            if ($request->type == 'driver') {
+                $users = User::where('role', 'kurir')
+                    ->where(function ($query) {
+                        $query->doesntHave('driver') // belum punya data driver
+                            ->orWhereHas('driver', function ($q) {
+                                $q->where('status_approval', 0); // sudah ada tapi belum di-approve
+                            });
+                    })
+                    ->get();
+            } else {
+                $users = User::where('status', $request->status)
+                    ->where(function ($query) {
+                        $query->where('role', '!=', 'kurir')
+                            ->orWhere(function ($q) {
+                                $q->where('role', 'kurir')
+                                    ->whereHas('driver', function ($d) {
+                                        $d->where('status_approval', true);
+                                    });
+                            });
+                    })
+                    ->with('driver')
+                    ->latest()
+                    ->get();
+            }
 
             return response()->json([
                 'data' => $users
@@ -177,6 +200,35 @@ class UserController extends Controller
         }
     }
 
+    public function approve($id)
+    {
+        try {
+            $user = User::with('driver')->findOrFail($id);
+
+            if (!$user->driver) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data driver tidak ditemukan'
+                ], 404);
+            }
+
+            $driver = $user->driver;
+            $driver->status_approval = true;
+            $driver->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diverifikasi'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memverifikasi data',
+                'error' => $e->getMessage() // optional debug
+            ], 500);
+        }
+    }
+
     public function restore($id)
     {
         try {
@@ -186,12 +238,12 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil dikembalikan'
+                'message' => 'Data berhasil diverifikasi'
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal mengembalikan data'
+                'message' => 'Gagal memverifikasi data'
             ], 500);
         }
     }

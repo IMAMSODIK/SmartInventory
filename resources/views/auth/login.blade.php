@@ -107,6 +107,14 @@
 
                 <button class="btn text-white" type="button" id="login-submit"><i class="fas fa-sign-in-alt"
                         style="margin-right: 8px;"></i> Continue</button>
+
+                <div style="margin-top: 15px; text-align:center;">
+                    <span style="font-size: 13px; color: #777;">Don't have an account?</span><br>
+
+                    <a href="/#register" class="btn-outline" style="margin-top:8px;">
+                        <i class="fas fa-user-plus" style="margin-right: 6px;"></i> Register Now
+                    </a>
+                </div>
             </div>
 
             <!-- Form Register -->

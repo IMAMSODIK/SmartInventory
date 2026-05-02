@@ -26,6 +26,8 @@ return new class extends Migration
 
             $table->decimal('rating', 3, 2)->default(0);
             $table->integer('total_delivery')->default(0);
+
+            $table->boolean('status_approval')->default(false);
             $table->timestamps();
         });
     }

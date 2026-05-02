@@ -15,12 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::get('/marketplace', [MainController::class, 'index']);
-Route::get('/daftar-produk/load-data', [ProdukController::class, 'loadData']);
-
-Route::post('/checkout', [OrderController::class, 'checkout']);
-Route::get('/order/status/{orderId}', [OrderController::class, 'checkStatus']);
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
@@ -31,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store']);
     Route::post('/users/update/{id}', [UserController::class, 'update']);
     Route::post('/users/delete/{id}', [UserController::class, 'deactivate']);
+    Route::post('/users/approve/{id}', [UserController::class, 'approve']);
     Route::post('/users/restore/{id}', [UserController::class, 'restore']);
     Route::delete('/users/destroy/{id}', [UserController::class, 'destroy']);
 
@@ -73,6 +68,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile-driver', [DriverController::class, 'index']);
     Route::post('/profile-driver', [DriverController::class, 'update']);
     Route::post('/driver/update-location', [DriverController::class, 'updateLocation']);
+
+    Route::get('/marketplace', [MainController::class, 'index']);
+    Route::get('/daftar-produk/load-data', [ProdukController::class, 'loadData']);
+
+    Route::post('/checkout', [OrderController::class, 'checkout']);
+    Route::get('/order/status/{orderId}', [OrderController::class, 'checkStatus']);
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

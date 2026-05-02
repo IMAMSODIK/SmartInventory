@@ -106,7 +106,7 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
-                'status' => false
+                'status' => true
             ]);
 
             return response()->json([

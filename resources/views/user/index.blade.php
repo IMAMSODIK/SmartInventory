@@ -42,6 +42,11 @@
                         Aktivasi User
                     </button>
                 </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="driver-tab" data-bs-toggle="tab" data-bs-target="#driver">
+                        Aktivasi Driver
+                    </button>
+                </li>
             </ul>
 
             <div class="tab-content mt-3">
@@ -94,6 +99,36 @@
                         <div class="card mb-4">
                             <div class="card-body">
                                 <table id="dataTableTrash" class="table table-bordered">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Role</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="driver">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-info refresh-data" data-table="driver" style="margin-right: 5px">
+                                        <i class="fa fa-refresh me-2" aria-hidden="true"></i> Refresh Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <table id="dataTableDriver" class="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>No</th>

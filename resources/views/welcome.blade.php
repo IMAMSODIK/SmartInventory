@@ -96,8 +96,8 @@
             </div>
             <a href="#register" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Join Now<i
                     class="fa fa-arrow-right ms-3"></i></a>
-            <a href="/marketplace" class="btn btn-warning rounded-0 py-4 px-lg-5 d-none d-lg-block text-white">Shop Now<i
-                    class="fa fa-arrow-right ms-3"></i></a>
+            <a href="/marketplace" class="btn btn-warning rounded-0 py-4 px-lg-5 d-none d-lg-block text-white">Shop
+                Now<i class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </nav>
     <!-- Navbar End -->
@@ -308,9 +308,20 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">
-                                        Daftar Sekarang
-                                    </button>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">
+                                                Register now
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <span style="font-size:14px; color:#666;">Alredy have an account?</span><br>
+
+                                            <a href="/login" class="btn btn-outline-primary rounded-pill py-2 px-4 mt-2">
+                                                Login
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>

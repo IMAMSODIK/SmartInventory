@@ -148,7 +148,61 @@ let tableTrash = $('#dataTableTrash').DataTable({
         className: 'text-nowrap',
         render: function (data) {
             return `
-                            <button class="btn btn-sm btn-primary restore-btn" data-id="${data}"><i class="fa fa-retweet" aria-hidden="true"></i></button>
+                            <button class="btn btn-sm btn-primary restore-btn" data-id="${data}"><i class="fa fa-check-circle" aria-hidden="true"></i></button>
+                            <button class="btn btn-sm btn-danger destroy-btn" data-id="${data}"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            <button class="btn btn-sm btn-info detail-btn" data-id="${data}" data-page="trash">Detail</button>
+                        `;
+        }
+    }
+    ]
+});
+
+let tableDriver = $('#dataTableDriver').DataTable({
+    processing: true,
+    ajax: {
+        url: '/users/data',
+        dataSrc: 'data',
+        data: function (d) {
+            d.status = 0;
+            d.type = 'driver'
+        }
+    },
+    columnDefs: [{
+        targets: [0, 3, 4, 5],
+        className: 'text-center'
+    }],
+    columns: [{
+        data: null,
+        render: function (data, type, row, meta) {
+            return meta.row + 1;
+        }
+    },
+    {
+        data: 'name'
+    },
+    {
+        data: 'email'
+    },
+    {
+        data: 'status',
+        render: function (data) {
+            return data ?
+                '<span class="badge bg-success">Active</span>' :
+                '<span class="badge bg-secondary">Inactive</span>';
+        }
+    },
+    {
+        data: 'role',
+        render: function (data) {
+            return `<span class="badge bg-info">Kurir</span>`;
+        }
+    },
+    {
+        data: 'id',
+        className: 'text-nowrap',
+        render: function (data) {
+            return `
+                            <button class="btn btn-sm btn-primary approve-btn" data-id="${data}"><i class="fa fa-check-circle" aria-hidden="true"></i></button>
                             <button class="btn btn-sm btn-danger destroy-btn" data-id="${data}"><i class="fa fa-trash" aria-hidden="true"></i></button>
                             <button class="btn btn-sm btn-info detail-btn" data-id="${data}" data-page="trash">Detail</button>
                         `;
@@ -437,10 +491,10 @@ $(document).on('click', '.restore-btn', function () {
 
     Swal.fire({
         title: 'Yakin?',
-        text: "Apakah anda ingin mengembalikan data ini?",
+        text: "Apakah anda ingin memverifikasi data ini?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Ya, kembalikan!',
+        confirmButtonText: 'Ya, verifikasi!',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -468,11 +522,49 @@ $(document).on('click', '.restore-btn', function () {
     });
 });
 
+$(document).on('click', '.approve-btn', function () {
+    let id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Yakin?',
+        text: "Apakah anda ingin memverifikasi data ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, verifikasi!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: '/users/approve/' + id,
+                type: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (res) {
+                    if (res.success) {
+                        tableDriver.ajax.reload(null, false);
+                        alertResult('success', 'Berhasil', res.message);
+                    } else {
+                        alertResult('warning', 'Pengembalian Data Gagal', 'Gagal mengembalikan data');
+                    }
+                },
+                error: function (res) {
+                    alertResult('error', 'Error', "Data driver belum lengkap");
+                }
+            });
+
+        }
+    });
+});
+
 $(".refresh-data").on("click", function () {
     let tableType = $(this).data("table");
     if (tableType === "data") {
         table.ajax.reload(null, false);
     } else if (tableType === "trash") {
         tableTrash.ajax.reload(null, false);
+    } else if (tableType === "driver") {
+        tableDriver.ajax.reload(null, false);
     }
 })

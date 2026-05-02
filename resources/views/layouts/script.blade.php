@@ -46,7 +46,7 @@
     let lastOrderHash = null;
     function loadDriverOrders() {
         $.get('/driver/incoming-order', function(res) {
-
+            console.log(res)
             if (!res.status) {
                 $('#driverOrders').html('<p>Tidak ada order</p>');
                 return;
