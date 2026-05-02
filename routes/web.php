@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/users/destroy/{id}', [UserController::class, 'destroy']);
 
     Route::get('/daftar-produk', [ProdukController::class, 'index']);
+    Route::get('/daftar-produk/load-data', [ProdukController::class, 'loadData']);
     Route::get('/daftar-produk/data', [ProdukController::class, 'data']);
     Route::get('/daftar-produk/data-table', [ProdukController::class, 'dataTable']);
     Route::post('/daftar-produk/toggle-ready', [ProdukController::class, 'toggleReady']);
@@ -70,7 +71,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/driver/update-location', [DriverController::class, 'updateLocation']);
 
     Route::get('/marketplace', [MainController::class, 'index']);
-    Route::get('/daftar-produk/load-data', [ProdukController::class, 'loadData']);
 
     Route::post('/checkout', [OrderController::class, 'checkout']);
     Route::get('/order/status/{orderId}', [OrderController::class, 'checkStatus']);
