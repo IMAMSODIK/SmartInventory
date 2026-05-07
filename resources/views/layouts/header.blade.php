@@ -75,10 +75,12 @@
                             </span></div>
                     </div>
                 </li>
-                <li class="tg-list-item onhover-dropdown">
-                    <input class="tgl tgl-skewed" id="driver-status" type="checkbox">
-                    <label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="driver-status"></label>
-                </li>
+                @if (auth()->user()->role == 'kurir')
+                    <li class="tg-list-item onhover-dropdown">
+                        <input class="tgl tgl-skewed" id="driver-status" type="checkbox">
+                        <label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="driver-status"></label>
+                    </li>
+                @endif
                 <li class="onhover-dropdown">
                     <svg>
                         <use href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#star') }}"></use>
