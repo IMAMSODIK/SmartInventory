@@ -186,7 +186,7 @@ class DriverController extends Controller
             $driver = auth()->user()->driver;
 
             if (!$driver) {
-                return response()->json(['status' => false]);
+                return response()->json(['message' => "bukan driver", 'status' => false]);
             }
 
             $orders = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
