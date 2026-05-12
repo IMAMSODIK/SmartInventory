@@ -389,7 +389,7 @@
 <script>
     setInterval(() => {
         loadDriverOrders();
-    }, 5000);
+    }, 3000);
 </script>
 
 <script>
