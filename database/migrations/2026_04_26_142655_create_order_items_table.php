@@ -27,7 +27,7 @@ return new class extends Migration
                 'delivered'
             ])->default('pending');
             $table->foreignId('driver_id')->nullable();
-            $table->enum('delivery_status', ['pending','picked','on_delivery','delivered'])->default('pending');
+            $table->enum('delivery_status', ['pending','picked','on_delivery','delivered', 'assigned'])->default('pending');
             $table->timestamps();
         });
     }

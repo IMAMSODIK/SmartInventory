@@ -381,38 +381,8 @@
                 </div>
 
                 <div class="row" id="driverOrders">
-                    <div class="col-12">
-                        <div class="card border border-warning shadow-sm">
-
-                            <div class="card-body">
-
-                                <h5 class="text-warning mb-3">
-                                    🚚 Order Masuk!
-                                </h5>
-
-                                <p><b>Order ID:</b> <span id="order-id"></span></p>
-                                <p><b>Customer:</b> <span id="customer-name"></span></p>
-                                <p><b>Alamat:</b> <span id="customer-address"></span></p>
-
-                                <hr>
-
-                                <div id="order-items"></div>
-
-                                <div class="mt-3 d-flex gap-2">
-                                    <button class="btn btn-success" id="btn-start-delivery">
-                                        Mulai Antar
-                                    </button>
-
-                                    <button class="btn btn-secondary" id="btn-hide-order">
-                                        Sembunyikan
-                                    </button>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
                 </div>
+
             @endif
         </div>
 

@@ -186,12 +186,26 @@ class DriverController extends Controller
             $driver = auth()->user()->driver;
 
             if (!$driver) {
-                return response()->json(['status' => false]);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Driver tidak ditemukan'
+                ]);
             }
 
-            $orders = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
+            $orders = OrderItem::with([
+                'order',
+                'order.alamat',
+                'order.buyer',
+                'produk.profileUsaha.user'
+            ])
                 ->where('driver_id', $driver->id)
-                ->whereIn('delivery_status', ['assigned', 'picked', 'on_delivery', 'delivered'])
+                ->whereIn('delivery_status', [
+                    'pending',
+                    'picked',
+                    'on_delivery',
+                    'delivered',
+                    'assigned',
+                ])
                 ->latest()
                 ->get()
                 ->groupBy('order_id');
@@ -201,7 +215,9 @@ class DriverController extends Controller
                 'data' => $orders
             ]);
         } catch (\Exception $e) {
+
             return response()->json([
+                'status' => false,
                 'message' => 'Gagal ambil order',
                 'error' => $e->getMessage()
             ], 500);
