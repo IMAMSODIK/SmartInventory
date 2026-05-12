@@ -12,6 +12,7 @@ class MidtransController extends Controller
     {
         Config::$serverKey = config('midtrans.server_key');
         Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$appendNotifUrl = config('midtrans.notification_url');
         Config::$isSanitized = true;
         Config::$is3ds = true;
     }

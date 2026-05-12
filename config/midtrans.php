@@ -76,4 +76,6 @@ return [
         'duration' => 60
     ],
 
+    'notification_url' => env('MIDTRANS_NOTIFICATION_URL'),
+
 ];

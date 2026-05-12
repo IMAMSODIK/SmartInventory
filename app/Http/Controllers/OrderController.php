@@ -22,6 +22,7 @@ class OrderController extends Controller
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
+        \Midtrans\Config::$appendNotifUrl = config('midtrans.notification_url');
     }
 
     private function calculateDistance($lat1, $lon1, $lat2, $lon2)
