@@ -186,12 +186,12 @@ class DriverController extends Controller
             $driver = auth()->user()->driver;
 
             if (!$driver) {
-                return response()->json(['message' => "bukan driver", 'status' => false]);
+                return response()->json(['status' => false]);
             }
 
             $orders = OrderItem::with(['order', 'order.alamat', 'order.buyer'])
                 ->where('driver_id', $driver->id)
-                ->whereIn('delivery_status', ['accepted', 'shipping'])
+                ->whereIn('delivery_status', ['assigned', 'picked', 'on_delivery', 'delivered'])
                 ->latest()
                 ->get()
                 ->groupBy('order_id');
