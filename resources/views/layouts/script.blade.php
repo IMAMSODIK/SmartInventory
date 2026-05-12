@@ -50,11 +50,19 @@
         $.get('/driver/incoming-order', function(res) {
 
             if (!res.status) {
-                $('#driverOrders').html(`
+
+                $('#activeOrders').html(`
                 <div class="alert alert-secondary">
-                    Tidak ada order masuk
+                    Tidak ada order aktif
                 </div>
             `);
+
+                $('#historyOrders').html(`
+                <div class="alert alert-secondary">
+                    Belum ada history pengantaran
+                </div>
+            `);
+
                 return;
             }
 
@@ -66,7 +74,8 @@
 
             lastOrderHash = currentHash;
 
-            let html = '';
+            let activeHtml = '';
+            let historyHtml = '';
 
             Object.values(res.data).forEach(group => {
 
@@ -82,64 +91,75 @@
 
                 let totalBelanja = 0;
 
-                // ambil seller dari item pertama
                 let seller =
                     firstItem.produk?.profile_usaha;
 
                 let sellerUser =
                     seller?.user;
 
-                html += `
-            <div class="card shadow border-0 mb-4 rounded-4">
+                let cardHtml = `
+                <div class="card border-0 shadow mb-4 rounded-4">
 
-                <div class="card-body p-4">
+                    <div class="card-body p-4">
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="fw-bold text-success">
-                            ORDER #${order.order_id}
-                        </h4>
+                        <div class="d-flex justify-content-between align-items-center">
 
-                        <span class="badge bg-primary text-uppercase">
-                            ${deliveryStatus}
-                        </span>
-                    </div>
+                            <h4 class="fw-bold text-success">
+                                #${order.order_id}
+                            </h4>
 
-                    <hr>
+                            <span class="badge bg-primary">
+                                ${deliveryStatus}
+                            </span>
 
-                    <h5 class="fw-bold mb-3">
-                        👤 Data Customer
-                    </h5>
+                        </div>
 
-                    <p class="mb-1">
-                        <strong>Nama:</strong>
-                        ${customer.name}
-                    </p>
+                        <hr>
 
-                    <p class="mb-1">
-                        <strong>HP:</strong>
-                        ${customer.phone ?? '-'}
-                    </p>
+                        <h5 class="fw-bold">
+                            👤 Customer
+                        </h5>
 
-                    <p class="mb-2">
-                        <strong>Alamat:</strong>
-                        ${alamat.full_address}
-                    </p>
+                        <p class="mb-1">
+                            <strong>Nama:</strong>
+                            ${customer.name}
+                        </p>
 
-                    <div class="mb-4">
-                        <a href="https://www.google.com/maps?q=${alamat.latitude},${alamat.longitude}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-primary">
-                           📍 Lihat Lokasi Customer
-                        </a>
-                    </div>
+                        <p class="mb-1">
+                            <strong>HP:</strong>
+                            ${customer.phone ?? '-'}
+                        </p>
+
+                        <p class="mb-3">
+                            <strong>Alamat:</strong>
+                            ${alamat.full_address}
+                        </p>
+
+                        <div class="mb-4">
+
+                            <a href="https://www.google.com/maps?q=${alamat.latitude},${alamat.longitude}"
+                               target="_blank"
+                               class="btn btn-outline-primary btn-sm">
+
+                               📍 Lokasi Customer
+                            </a>
+
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${alamat.latitude},${alamat.longitude}"
+                               target="_blank"
+                               class="btn btn-dark btn-sm">
+
+                               🗺️ Navigasi
+                            </a>
+
+                        </div>
             `;
 
-                // SELLER
+                // DATA PENJUAL
                 if (seller) {
 
-                    html += `
-                    <h5 class="fw-bold mb-3">
-                        🏪 Data Penjual
+                    cardHtml += `
+                    <h5 class="fw-bold">
+                        🏪 Penjual
                     </h5>
 
                     <p class="mb-1">
@@ -147,36 +167,43 @@
                         ${seller.store_name}
                     </p>
 
-                    <p class="mb-1">
+                    <p class="mb-3">
                         <strong>Pemilik:</strong>
                         ${sellerUser?.name ?? '-'}
                     </p>
 
                     <div class="mb-4">
+
                         <a href="https://www.google.com/maps?q=${seller.latitude},${seller.longitude}"
                            target="_blank"
-                           class="btn btn-sm btn-outline-success">
-                           📍 Lihat Lokasi Penjual
+                           class="btn btn-outline-success btn-sm">
+
+                           📍 Lokasi Penjual
                         </a>
+
                     </div>
                 `;
                 }
 
-                html += `
-                <h5 class="fw-bold mb-3">
-                    🛒 Barang Dibeli
+                // BARANG
+                cardHtml += `
+                <h5 class="fw-bold">
+                    🛒 Barang
                 </h5>
 
                 <div class="table-responsive">
+
                     <table class="table table-bordered">
 
                         <thead class="table-light">
+
                             <tr>
                                 <th>Produk</th>
                                 <th>Qty</th>
                                 <th>Harga</th>
                                 <th>Total</th>
                             </tr>
+
                         </thead>
 
                         <tbody>
@@ -189,8 +216,9 @@
 
                     totalBelanja += subtotal;
 
-                    html += `
+                    cardHtml += `
                     <tr>
+
                         <td>${item.nama_produk}</td>
 
                         <td>${item.qty}</td>
@@ -202,16 +230,19 @@
                         <td>
                             ${formatRupiah(subtotal)}
                         </td>
+
                     </tr>
                 `;
                 });
 
-                html += `
+                cardHtml += `
                         </tbody>
+
                     </table>
+
                 </div>
 
-                <div class="bg-light p-3 rounded-3 mt-3">
+                <div class="bg-light rounded-3 p-3 mt-3">
 
                     <div class="d-flex justify-content-between">
                         <span>Total Belanja</span>
@@ -221,7 +252,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <span>Ongkos Kirim</span>
+                        <span>Ongkir</span>
                         <strong>
                             ${formatRupiah(order.shipping_cost)}
                         </strong>
@@ -230,11 +261,13 @@
                     <hr>
 
                     <div class="d-flex justify-content-between">
+
                         <span>Grand Total</span>
 
                         <strong class="text-success fs-5">
                             ${formatRupiah(order.total)}
                         </strong>
+
                     </div>
 
                 </div>
@@ -242,81 +275,98 @@
                 <div class="mt-4 d-flex flex-wrap gap-2">
             `;
 
-                // ACTION BUTTON
-
+                // BUTTON ACTION
                 if (deliveryStatus === 'assigned') {
 
-                    html += `
-                        <button
-                            class="btn btn-primary btn-accept-order"
-                            data-id="${order.id}">
-                            ✅ Terima Order
-                        </button>
-                    `;
+                    cardHtml += `
+                    <button
+                        class="btn btn-primary btn-accept-order"
+                        data-id="${order.id}">
+
+                        ✅ Terima Order
+
+                    </button>
+                `;
                 }
 
                 if (deliveryStatus === 'picked') {
 
-                    html += `
-                        <button
-                            class="btn btn-warning btn-start-delivery"
-                            data-id="${order.id}">
-                            🚚 Antar Sekarang
-                        </button>
-                    `;
+                    cardHtml += `
+                    <button
+                        class="btn btn-warning btn-start-delivery"
+                        data-id="${order.id}">
+
+                        🚚 Antar Sekarang
+
+                    </button>
+                `;
                 }
 
                 if (deliveryStatus === 'on_delivery') {
 
-                    html += `
-                        <button
-                            class="btn btn-success btn-complete"
-                            data-id="${order.id}">
-                            ✅ Selesaikan Pesanan
-                        </button>
-                    `;
+                    cardHtml += `
+                    <button
+                        class="btn btn-success btn-complete"
+                        data-id="${order.id}">
+
+                        ✅ Selesaikan
+
+                    </button>
+                `;
                 }
 
-                if (deliveryStatus === 'delivered') {
-
-                    html += `
-                        <button
-                            class="btn btn-secondary"
-                            disabled>
-                            ✔ Pesanan Selesai
-                        </button>
-                    `;
-                }
-
-                // tombol maps cepat
-                html += `
-                <a href="https://www.google.com/maps/dir/?api=1&destination=${alamat.latitude},${alamat.longitude}"
-                   target="_blank"
-                   class="btn btn-dark">
-                   🗺️ Navigasi
-                </a>
-            `;
-
-                // tombol telpon
                 if (customer.phone) {
 
-                    html += `
+                    cardHtml += `
                     <a href="tel:${customer.phone}"
                        class="btn btn-info text-white">
-                       📞 Hubungi Customer
+
+                       📞 Hubungi
+
                     </a>
                 `;
                 }
 
-                html += `
+                cardHtml += `
                 </div>
 
                 </div>
+
             </div>
             `;
+
+                // PEMISAH TAB
+                if (
+                    deliveryStatus === 'delivered' ||
+                    order.status === 'cancelled'
+                ) {
+
+                    historyHtml += cardHtml;
+
+                } else {
+
+                    activeHtml += cardHtml;
+                }
             });
 
-            $('#driverOrders').html(html);
+            // RENDER
+            $('#activeOrders').html(
+                activeHtml ||
+                `
+            <div class="alert alert-secondary">
+                Tidak ada order aktif
+            </div>
+            `
+            );
+
+            $('#historyOrders').html(
+                historyHtml ||
+                `
+            <div class="alert alert-secondary">
+                Belum ada history pengantaran
+            </div>
+            `
+            );
         });
     }
 

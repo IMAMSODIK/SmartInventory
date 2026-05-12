@@ -347,7 +347,7 @@
             @endif
 
             @if (auth()->user()->role == 'kurir')
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-xl-4 col-sm-12">
                         <div class="card o-hidden small-widget">
                             <div class="card-body total-project border-b-primary border-2"><span
@@ -378,11 +378,49 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
-                <div class="row" id="driverOrders">
-                </div>
+                <div class="container mt-4">
 
+                    <!-- TAB -->
+                    <ul class="nav nav-pills mb-4" id="driverTab">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" id="aktif-tab" data-bs-toggle="pill"
+                                data-bs-target="#aktif-order">
+                                🚚 Order Aktif
+                            </button>
+                        </li>
+
+                        <li class="nav-item ms-2">
+                            <button class="nav-link" id="history-tab" data-bs-toggle="pill"
+                                data-bs-target="#history-order">
+                                📜 History Pengantaran
+                            </button>
+                        </li>
+
+                    </ul>
+
+                    <!-- TAB CONTENT -->
+                    <div class="tab-content">
+
+                        <!-- ORDER AKTIF -->
+                        <div class="tab-pane fade show active" id="aktif-order">
+
+                            <div id="activeOrders"></div>
+
+                        </div>
+
+                        <!-- HISTORY -->
+                        <div class="tab-pane fade" id="history-order">
+
+                            <div id="historyOrders"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
             @endif
         </div>
 
