@@ -301,7 +301,6 @@ class DriverController extends Controller
     public function completeOrder($id)
     {
         try {
-
             OrderItem::where('order_id', $id)
                 ->update([
                     'delivery_status' => 'delivered'
@@ -309,6 +308,11 @@ class DriverController extends Controller
 
             Order::find($id)->update([
                 'status' => 'delivered'
+            ]);
+
+            $driver = auth()->user()->driver;
+            $driver->update([
+                'is_available' => true
             ]);
 
             return response()->json([
