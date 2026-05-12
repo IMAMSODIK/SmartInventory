@@ -222,6 +222,10 @@ class OrderController extends Controller
                     'first_name' => $buyer->name,
                     'email' => $buyer->email,
                 ],
+                'callbacks' => [
+                    'finish' =>
+                    'https://smart-inventory.forumrektorptkin2026.com/payment-success'
+                ]
             ];
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
