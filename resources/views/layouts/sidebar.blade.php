@@ -98,13 +98,6 @@
                             <span class="">Order</span>
                         </a>
                     </li>
-
-                    <li class="sidebar-list">
-                        <a class="sidebar-link sidebar-title link-nav" href="/statistik-penjualan">
-                            <i class="fa fa-line-chart text-white" aria-hidden="true"></i>
-                            <span>Statistik Penjualan</span>
-                        </a>
-                    </li>
                 @endif
 
             </ul>

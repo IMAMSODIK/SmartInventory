@@ -71,3 +71,4 @@ role pembeli belum muncul di dashboard admin
 kurir bisa on off padahal belum approve admin
 tombol approve produk masih muncul di pedagang
 tambahkan tombol ke marketplace untuk semua
+hitung ongkir masih muncul saat sudah bayar

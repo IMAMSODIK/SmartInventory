@@ -244,37 +244,48 @@
 
                 // ACTION BUTTON
 
-                if (deliveryStatus === 'pending') {
+                if (deliveryStatus === 'assigned') {
 
                     html += `
-                    <button
-                        class="btn btn-primary btn-pickup"
-                        data-id="${order.id}">
-                        📦 Ambil Pesanan
-                    </button>
-                `;
+                        <button
+                            class="btn btn-primary btn-accept-order"
+                            data-id="${order.id}">
+                            ✅ Terima Order
+                        </button>
+                    `;
                 }
 
                 if (deliveryStatus === 'picked') {
 
                     html += `
-                    <button
-                        class="btn btn-warning btn-start-delivery"
-                        data-id="${order.id}">
-                        🚚 Antar Sekarang
-                    </button>
-                `;
+                        <button
+                            class="btn btn-warning btn-start-delivery"
+                            data-id="${order.id}">
+                            🚚 Antar Sekarang
+                        </button>
+                    `;
                 }
 
                 if (deliveryStatus === 'on_delivery') {
 
                     html += `
-                    <button
-                        class="btn btn-success btn-complete"
-                        data-id="${order.id}">
-                        ✅ Selesaikan Pesanan
-                    </button>
-                `;
+                        <button
+                            class="btn btn-success btn-complete"
+                            data-id="${order.id}">
+                            ✅ Selesaikan Pesanan
+                        </button>
+                    `;
+                }
+
+                if (deliveryStatus === 'delivered') {
+
+                    html += `
+                        <button
+                            class="btn btn-secondary"
+                            disabled>
+                            ✔ Pesanan Selesai
+                        </button>
+                    `;
                 }
 
                 // tombol maps cepat
@@ -309,23 +320,64 @@
         });
     }
 
-    $(document).on('click', '.btn-shipping', function() {
+    $(document).on('click', '.btn-accept-order', function() {
+
         let id = $(this).data('id');
 
-        $.post('/driver/shipping/' + id, {
-            _token: csrf
-        }, function() {
-            loadDriverOrders();
+        $.ajax({
+            url: `/driver/order/${id}/accept`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+
+                alert(res.message);
+
+                loadDriverOrders();
+            },
+            error: function(err) {
+
+                alert('Gagal menerima order');
+            }
+        });
+    });
+
+    $(document).on('click', '.btn-start-delivery', function() {
+
+        let id = $(this).data('id');
+
+        $.ajax({
+            url: `/driver/order/${id}/delivery`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+
+                alert(res.message);
+
+                loadDriverOrders();
+            }
         });
     });
 
     $(document).on('click', '.btn-complete', function() {
+
         let id = $(this).data('id');
 
-        $.post('/driver/complete/' + id, {
-            _token: csrf
-        }, function() {
-            loadDriverOrders();
+        $.ajax({
+            url: `/driver/order/${id}/complete`,
+            type: 'POST',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+
+                alert(res.message);
+
+                loadDriverOrders();
+            }
         });
     });
 

@@ -254,48 +254,72 @@ class DriverController extends Controller
         }
     }
 
-    public function completeOrder($orderId)
+    public function acceptOrder($id)
     {
-        DB::beginTransaction();
-
         try {
 
-            $driver = auth()->user()->driver;
+            OrderItem::where('order_id', $id)
+                ->update([
+                    'delivery_status' => 'picked'
+                ]);
 
-            OrderItem::where('order_id', $orderId)
-                ->where('driver_id', $driver->id)
+            return response()->json([
+                'status' => true,
+                'message' => 'Order berhasil diterima'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function startDelivery($id)
+    {
+        try {
+
+            OrderItem::where('order_id', $id)
+                ->update([
+                    'delivery_status' => 'on_delivery'
+                ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Pesanan sedang diantar'
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function completeOrder($id)
+    {
+        try {
+
+            OrderItem::where('order_id', $id)
                 ->update([
                     'delivery_status' => 'delivered'
                 ]);
 
-            // 🔥 cek semua item selesai
-            $allDone = OrderItem::where('order_id', $orderId)
-                ->where('delivery_status', '!=', 'delivered')
-                ->count();
-
-            if ($allDone == 0) {
-                Order::where('id', $orderId)->update([
-                    'status' => 'delivered'
-                ]);
-            }
-
-            // 🔥 driver free lagi
-            $driver->update([
-                'is_available' => true
+            Order::find($id)->update([
+                'status' => 'delivered'
             ]);
 
-            DB::commit();
-
             return response()->json([
-                'message' => 'Order selesai'
+                'status' => true,
+                'message' => 'Pesanan selesai'
             ]);
         } catch (\Exception $e) {
 
-            DB::rollBack();
-
             return response()->json([
-                'message' => 'Gagal menyelesaikan',
-                'error' => $e->getMessage()
+                'status' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }

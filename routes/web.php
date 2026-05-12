@@ -66,6 +66,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/driver/shipping/{orderId}', [DriverController::class, 'shippingOrder']);
     Route::post('/driver/complete/{orderId}', [DriverController::class, 'completeOrder']);
 
+    Route::post('/driver/order/{id}/accept', [DriverController::class, 'acceptOrder']);
+    Route::post('/driver/order/{id}/delivery', [DriverController::class, 'startDelivery']);
+    Route::post('/driver/order/{id}/complete', [DriverController::class, 'completeOrder']);
+
     Route::get('/profile-driver', [DriverController::class, 'index']);
     Route::post('/profile-driver', [DriverController::class, 'update']);
     Route::post('/driver/update-location', [DriverController::class, 'updateLocation']);
