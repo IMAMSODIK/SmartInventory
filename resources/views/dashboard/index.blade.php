@@ -621,8 +621,7 @@
                                         </div>
 
                                         <!-- AKSI -->
-                                        {{$order->status}}
-                                        @if ($order->status == 'delivered')
+                                        @if ($order->status == 'paid')
                                             <div class="mt-4">
 
                                                 <button class="btn btn-success rounded-pill complete-order-btn mt-3"
@@ -670,7 +669,7 @@
                                                 </small>
 
                                             </div>
-
+                                            {{$order->status}}
                                             @if ($order->status == 'delivered')
                                                 <span class="badge bg-success">
                                                     SELESAI
