@@ -111,7 +111,7 @@ class DashboardController extends Controller
 
                 // HISTORY ORDER
                 $historyOrders = Order::with([
-                    'items',
+                    'orderItem',
                     'alamat'
                 ])
                     ->where('buyer_id', $user->id)
