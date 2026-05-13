@@ -473,7 +473,7 @@
                             @forelse($activeOrders ?? [] as $order)
                                 @php
 
-                                    $firstItem = $order->items->first();
+                                    $firstItem = collect($order->items)->first();
 
                                     $img = asset('storage/default.png');
 
@@ -589,7 +589,7 @@
                             @forelse($historyOrders ?? [] as $order)
                                 @php
 
-                                    $firstItem = $order->items->first();
+                                    $firstItem = collect($order->items)->first();
 
                                     $img = asset('storage/default.png');
 
