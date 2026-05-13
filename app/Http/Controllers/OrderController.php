@@ -444,7 +444,7 @@ class OrderController extends Controller
 
         try {
 
-            $order = Order::with('items')
+            $order = Order::with('orderItem')
                 ->findOrFail($id);
 
             // UPDATE ORDER
@@ -454,7 +454,7 @@ class OrderController extends Controller
             ]);
 
             // DRIVER
-            $driverId = $order->items
+            $driverId = $order->orderItem
                 ->first()
                 ->driver_id;
 
