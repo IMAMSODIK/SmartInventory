@@ -17,7 +17,8 @@
 
 <body class="bg-gray-50">
 
-    {{$error}}
+    {{ session('error') }}
+
 
     <div id="overlay" class="overlay fixed inset-0 bg-black/50"></div>
 
