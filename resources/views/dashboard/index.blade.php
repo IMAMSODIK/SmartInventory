@@ -891,41 +891,114 @@
 
             $('#complete_order_id').val(orderId);
 
-            $.get('/buyer/order/' + orderId + '/detail', function(res) {
+            $.ajax({
 
-                let html = '';
+                url: '/buyer/order/' + orderId + '/detail',
 
-                res.order_item.forEach(item => {
+                method: 'GET',
 
-                    html += `
-                <div class="border rounded-4 p-3 mb-3">
+                beforeSend: function() {
 
-                    <h6 class="fw-bold">
-                        ${item.nama_produk}
-                    </h6>
+                    $('#produk-rating-wrapper').html(`
+            <div class="text-center py-4">
 
-                    <select class="form-select produk-rating mt-2"
-                            data-id="${item.id}">
+                <div class="spinner-border text-success"></div>
 
-                        <option value="5">5 - Sangat Baik</option>
-                        <option value="4">4 - Baik</option>
-                        <option value="3">3 - Cukup</option>
-                        <option value="2">2 - Buruk</option>
-                        <option value="1">1 - Sangat Buruk</option>
+                <p class="mt-2 mb-0">
+                    Memuat detail pesanan...
+                </p>
 
-                    </select>
+            </div>
+        `);
 
-                    <textarea class="form-control mt-2 produk-review"
-                              data-id="${item.id}"
-                              placeholder="Review produk"></textarea>
+                },
 
+                success: function(res) {
+
+                    let html = '';
+
+                    if (!res.order_item || res.order_item.length === 0) {
+
+                        html = `
+                <div class="alert alert-warning">
+                    Produk tidak ditemukan
                 </div>
             `;
-                });
 
-                $('#produk-rating-wrapper').html(html);
+                    } else {
 
-                $('#completeOrderModal').modal('show');
+                        res.order_item.forEach(item => {
+
+                            html += `
+                    <div class="border rounded-4 p-3 mb-3">
+
+                        <h6 class="fw-bold mb-2">
+                            ${item.nama_produk}
+                        </h6>
+
+                        <small class="text-muted d-block mb-2">
+                            Qty: ${item.qty}
+                        </small>
+
+                        <select class="form-select produk-rating mt-2"
+                                data-id="${item.id}">
+
+                            <option value="5">
+                                5 - Sangat Baik
+                            </option>
+
+                            <option value="4">
+                                4 - Baik
+                            </option>
+
+                            <option value="3">
+                                3 - Cukup
+                            </option>
+
+                            <option value="2">
+                                2 - Buruk
+                            </option>
+
+                            <option value="1">
+                                1 - Sangat Buruk
+                            </option>
+
+                        </select>
+
+                        <textarea class="form-control mt-2 produk-review"
+                                  data-id="${item.id}"
+                                  placeholder="Review produk"></textarea>
+
+                    </div>
+                `;
+                        });
+                    }
+
+                    $('#produk-rating-wrapper').html(html);
+
+                    $('#completeOrderModal').modal('show');
+
+                },
+
+                error: function(xhr) {
+
+                    console.log(xhr);
+
+                    let message = 'Gagal mengambil detail pesanan';
+
+                    if (xhr.responseJSON?.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    $('#produk-rating-wrapper').html(`
+            <div class="alert alert-danger">
+                ${message}
+            </div>
+        `);
+
+                    toastr.error(message);
+
+                }
 
             });
 
