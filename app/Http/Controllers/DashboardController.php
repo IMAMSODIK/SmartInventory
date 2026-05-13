@@ -95,9 +95,10 @@ class DashboardController extends Controller
                 ));
             } elseif ($user->role === 'pembeli') {
 
-                // ORDER AKTIF
                 $activeOrders = Order::with([
                     'alamat',
+                    'orderItem',
+                    'orderItem.produk',
                     'orderItem.produk.fotoProduk'
                 ])
                     ->where('buyer_id', $user->id)
@@ -109,9 +110,10 @@ class DashboardController extends Controller
                     ->latest()
                     ->get();
 
-                // HISTORY ORDER
                 $historyOrders = Order::with([
                     'alamat',
+                    'orderItem',
+                    'orderItem.produk',
                     'orderItem.produk.fotoProduk'
                 ])
                     ->where('buyer_id', $user->id)
