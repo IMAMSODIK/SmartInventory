@@ -621,6 +621,7 @@
                                         </div>
 
                                         <!-- AKSI -->
+                                        {{$order->status}}
                                         @if ($order->status == 'delivered')
                                             <div class="mt-4">
 
