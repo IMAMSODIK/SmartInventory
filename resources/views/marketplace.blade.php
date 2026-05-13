@@ -612,6 +612,7 @@
                 }));
 
                 $('#loadingCheckout').removeClass('hidden');
+                $('#modalCart').addClass('hidden');
 
                 $.ajax({
                     url: '/checkout',
