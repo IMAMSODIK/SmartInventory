@@ -519,6 +519,8 @@
                                                     }
                                                 }
 
+                                                $subtotal = $item->harga * $item->qty;
+
                                             @endphp
 
                                             <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
@@ -527,7 +529,7 @@
                                                 <img src="{{ $img }}" width="80" height="80"
                                                     class="rounded-3 object-fit-cover me-3">
 
-                                                <!-- DETAIL -->
+                                                <!-- DETAIL PRODUK -->
                                                 <div class="flex-grow-1">
 
                                                     <h6 class="fw-bold mb-1">
@@ -535,23 +537,34 @@
                                                     </h6>
 
                                                     <small class="text-muted d-block">
-                                                        Qty: {{ $item->qty }}
+                                                        Harga:
+                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
+                                                    </small>
+
+                                                    <small class="text-muted d-block">
+                                                        Jumlah:
+                                                        {{ $item->qty }}
                                                     </small>
 
                                                     @if ($item->note)
                                                         <small class="text-muted d-block">
-                                                            Catatan: {{ $item->note }}
+                                                            Catatan:
+                                                            {{ $item->note }}
                                                         </small>
                                                     @endif
 
                                                 </div>
 
-                                                <!-- HARGA -->
+                                                <!-- TOTAL -->
                                                 <div class="text-end">
 
-                                                    <strong class="text-success">
-                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
-                                                    </strong>
+                                                    <small class="text-muted d-block">
+                                                        Total
+                                                    </small>
+
+                                                    <h6 class="fw-bold text-success mb-0">
+                                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                    </h6>
 
                                                 </div>
 
@@ -674,15 +687,17 @@
                                                     }
                                                 }
 
+                                                $subtotal = $item->harga * $item->qty;
+
                                             @endphp
 
                                             <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
 
-                                                <!-- IMAGE -->
+                                                <!-- GAMBAR -->
                                                 <img src="{{ $img }}" width="80" height="80"
                                                     class="rounded-3 object-fit-cover me-3">
 
-                                                <!-- DETAIL -->
+                                                <!-- DETAIL PRODUK -->
                                                 <div class="flex-grow-1">
 
                                                     <h6 class="fw-bold mb-1">
@@ -690,17 +705,34 @@
                                                     </h6>
 
                                                     <small class="text-muted d-block">
-                                                        Qty: {{ $item->qty }}
+                                                        Harga:
+                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
                                                     </small>
+
+                                                    <small class="text-muted d-block">
+                                                        Jumlah:
+                                                        {{ $item->qty }}
+                                                    </small>
+
+                                                    @if ($item->note)
+                                                        <small class="text-muted d-block">
+                                                            Catatan:
+                                                            {{ $item->note }}
+                                                        </small>
+                                                    @endif
 
                                                 </div>
 
-                                                <!-- PRICE -->
+                                                <!-- TOTAL -->
                                                 <div class="text-end">
 
-                                                    <strong class="text-success">
-                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
-                                                    </strong>
+                                                    <small class="text-muted d-block">
+                                                        Total
+                                                    </small>
+
+                                                    <h6 class="fw-bold text-success mb-0">
+                                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                    </h6>
 
                                                 </div>
 
