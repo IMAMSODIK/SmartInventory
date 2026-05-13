@@ -476,56 +476,13 @@
                                     <div class="card-body">
 
                                         <!-- HEADER -->
-                                        <div class="d-flex justify-content-between mb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
 
                                             <div>
 
                                                 <h5 class="fw-bold text-success mb-1">
                                                     #{{ $order->order_id }}
                                                 </h5>
-
-                                                <div class="mt-2">
-
-                                                    @foreach ($order->items ?? [] as $item)
-                                                        @php
-                                                            $subtotal = $item->harga * $item->qty;
-                                                        @endphp
-
-                                                        <div class="small text-muted mb-1">
-
-                                                            • {{ $item->nama_produk }}
-                                                            x {{ $item->qty }}
-
-                                                            =
-
-                                                            <strong>
-                                                                Rp {{ number_format($subtotal, 0, ',', '.') }}
-                                                            </strong>
-
-                                                        </div>
-                                                    @endforeach
-
-                                                </div>
-
-                                                <!-- ONGKIR -->
-                                                <div class="mt-2 small">
-
-                                                    🚚 Ongkir:
-                                                    <strong>
-                                                        Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
-                                                    </strong>
-
-                                                </div>
-
-                                                <!-- TOTAL -->
-                                                <div class="small">
-
-                                                    💰 Total:
-                                                    <strong class="text-success">
-                                                        Rp {{ number_format($order->total, 0, ',', '.') }}
-                                                    </strong>
-
-                                                </div>
 
                                                 <small class="text-muted">
                                                     {{ $order->created_at->format('d M Y H:i') }}
@@ -540,80 +497,108 @@
                                         </div>
 
                                         <!-- ALAMAT -->
-                                        <p class="text-muted mb-4">
-                                            📍 {{ $order->alamat->full_address ?? '-' }}
-                                        </p>
+                                        <div class="mb-4">
 
-                                        <!-- LIST PRODUK -->
-                                        @foreach ($order->items ?? [] as $item)
+                                            <small class="text-muted d-block">
+                                                📍 Alamat Pengiriman
+                                            </small>
+
+                                            <strong>
+                                                {{ $order->alamat->full_address ?? '-' }}
+                                            </strong>
+
+                                        </div>
+
+                                        <!-- DETAIL PESANAN -->
+                                        <h6 class="fw-bold mb-3">
+                                            Detail Pesanan
+                                        </h6>
+
+                                        @forelse($order->items as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
 
-                                                if ($item->produk && $item->produk->fotoProduk->count()) {
-                                                    $img = asset(
-                                                        'storage/' . $item->produk->fotoProduk->first()->image,
-                                                    );
+                                                if (
+                                                    $item->produk &&
+                                                    $item->produk->fotoProduk &&
+                                                    $item->produk->fotoProduk->count()
+                                                ) {
+                                                    $foto = $item->produk->fotoProduk->first();
+
+                                                    if ($foto) {
+                                                        $img = asset('storage/' . $foto->image);
+                                                    }
                                                 }
 
                                                 $subtotal = $item->harga * $item->qty;
 
                                             @endphp
 
-                                            <div class="d-flex align-items-center border rounded-4 p-3 mb-3">
+                                            <div class="border rounded-4 p-3 mb-3">
 
-                                                <!-- GAMBAR -->
-                                                <img src="{{ $img }}" width="90" height="90"
-                                                    class="rounded-3 object-fit-cover me-3">
+                                                <div class="d-flex">
 
-                                                <!-- DETAIL -->
-                                                <div class="flex-grow-1">
+                                                    <!-- GAMBAR -->
+                                                    <img src="{{ $img }}" width="90" height="90"
+                                                        class="rounded-3 object-fit-cover me-3">
 
-                                                    <h6 class="fw-bold mb-1">
-                                                        {{ $item->nama_produk }}
-                                                    </h6>
+                                                    <!-- DETAIL -->
+                                                    <div class="flex-grow-1">
 
-                                                    <small class="text-muted d-block">
-                                                        Harga:
-                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
-                                                    </small>
+                                                        <h6 class="fw-bold mb-1">
+                                                            {{ $item->nama_produk }}
+                                                        </h6>
 
-                                                    <small class="text-muted d-block">
-                                                        Qty:
-                                                        {{ $item->qty }}
-                                                    </small>
-
-                                                    @if ($item->note)
                                                         <small class="text-muted d-block">
-                                                            Catatan:
-                                                            {{ $item->note }}
+                                                            Harga:
+                                                            Rp {{ number_format($item->harga, 0, ',', '.') }}
                                                         </small>
-                                                    @endif
 
-                                                </div>
+                                                        <small class="text-muted d-block">
+                                                            Qty:
+                                                            {{ $item->qty }}
+                                                        </small>
 
-                                                <!-- TOTAL -->
-                                                <div class="text-end">
+                                                        @if ($item->note)
+                                                            <small class="text-muted d-block">
+                                                                Catatan:
+                                                                {{ $item->note }}
+                                                            </small>
+                                                        @endif
 
-                                                    <small class="text-muted d-block">
-                                                        Total
-                                                    </small>
+                                                    </div>
 
-                                                    <h6 class="fw-bold text-success">
-                                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
-                                                    </h6>
+                                                    <!-- SUBTOTAL -->
+                                                    <div class="text-end">
+
+                                                        <small class="text-muted d-block">
+                                                            Total
+                                                        </small>
+
+                                                        <h6 class="fw-bold text-success">
+                                                            Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                        </h6>
+
+                                                    </div>
 
                                                 </div>
 
                                             </div>
-                                        @endforeach
 
-                                        <!-- TOTAL ORDER -->
-                                        <div class="border-top pt-3">
+                                        @empty
+
+                                            <div class="alert alert-light">
+                                                Tidak ada item pesanan
+                                            </div>
+                                        @endforelse
+
+                                        <!-- ONGKIR -->
+                                        <div class="border-top pt-3 mt-3">
 
                                             <div class="d-flex justify-content-between mb-2">
 
-                                                <span>Ongkir</span>
+                                                <span>🚚 Ongkir</span>
 
                                                 <strong>
                                                     Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
@@ -624,7 +609,7 @@
                                             <div class="d-flex justify-content-between">
 
                                                 <h5 class="fw-bold">
-                                                    Total Bayar
+                                                    💰 Total Bayar
                                                 </h5>
 
                                                 <h4 class="fw-bold text-success">
@@ -676,56 +661,13 @@
                                     <div class="card-body">
 
                                         <!-- HEADER -->
-                                        <div class="d-flex justify-content-between mb-3">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
 
                                             <div>
 
                                                 <h5 class="fw-bold mb-1">
                                                     #{{ $order->order_id }}
                                                 </h5>
-
-                                                <div class="mt-2">
-
-                                                    @foreach ($order->items ?? [] as $item)
-                                                        @php
-                                                            $subtotal = $item->harga * $item->qty;
-                                                        @endphp
-
-                                                        <div class="small text-muted mb-1">
-
-                                                            • {{ $item->nama_produk }}
-                                                            x {{ $item->qty }}
-
-                                                            =
-
-                                                            <strong>
-                                                                Rp {{ number_format($subtotal, 0, ',', '.') }}
-                                                            </strong>
-
-                                                        </div>
-                                                    @endforeach
-
-                                                </div>
-
-                                                <!-- ONGKIR -->
-                                                <div class="mt-2 small">
-
-                                                    🚚 Ongkir:
-                                                    <strong>
-                                                        Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
-                                                    </strong>
-
-                                                </div>
-
-                                                <!-- TOTAL -->
-                                                <div class="small">
-
-                                                    💰 Total:
-                                                    <strong class="text-success">
-                                                        Rp {{ number_format($order->total, 0, ',', '.') }}
-                                                    </strong>
-
-                                                </div>
 
                                                 <small class="text-muted">
                                                     {{ $order->created_at->format('d M Y H:i') }}
@@ -749,70 +691,96 @@
 
                                         </div>
 
-                                        <!-- LIST ITEM -->
-                                        @foreach ($order->items ?? [] as $item)
+                                        <!-- DETAIL ITEM -->
+                                        @forelse($order->items as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
 
-                                                if ($item->produk && $item->produk->fotoProduk->count()) {
-                                                    $img = asset(
-                                                        'storage/' . $item->produk->fotoProduk->first()->image,
-                                                    );
+                                                if (
+                                                    $item->produk &&
+                                                    $item->produk->fotoProduk &&
+                                                    $item->produk->fotoProduk->count()
+                                                ) {
+                                                    $foto = $item->produk->fotoProduk->first();
+
+                                                    if ($foto) {
+                                                        $img = asset('storage/' . $foto->image);
+                                                    }
                                                 }
 
                                                 $subtotal = $item->harga * $item->qty;
 
                                             @endphp
 
-                                            <div class="d-flex align-items-center border rounded-4 p-3 mb-3">
+                                            <div class="border rounded-4 p-3 mb-3">
 
-                                                <!-- GAMBAR -->
-                                                <img src="{{ $img }}" width="90" height="90"
-                                                    class="rounded-3 object-fit-cover me-3">
+                                                <div class="d-flex">
 
-                                                <!-- DETAIL -->
-                                                <div class="flex-grow-1">
+                                                    <!-- GAMBAR -->
+                                                    <img src="{{ $img }}" width="90" height="90"
+                                                        class="rounded-3 object-fit-cover me-3">
 
-                                                    <h6 class="fw-bold mb-1">
-                                                        {{ $item->nama_produk }}
-                                                    </h6>
+                                                    <!-- DETAIL -->
+                                                    <div class="flex-grow-1">
 
-                                                    <small class="text-muted d-block">
-                                                        Harga:
-                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
-                                                    </small>
+                                                        <h6 class="fw-bold mb-1">
+                                                            {{ $item->nama_produk }}
+                                                        </h6>
 
-                                                    <small class="text-muted d-block">
-                                                        Qty:
-                                                        {{ $item->qty }}
-                                                    </small>
+                                                        <small class="text-muted d-block">
+                                                            Harga:
+                                                            Rp {{ number_format($item->harga, 0, ',', '.') }}
+                                                        </small>
 
-                                                </div>
+                                                        <small class="text-muted d-block">
+                                                            Qty:
+                                                            {{ $item->qty }}
+                                                        </small>
 
-                                                <!-- TOTAL -->
-                                                <div class="text-end">
+                                                    </div>
 
-                                                    <small class="text-muted d-block">
-                                                        Total
-                                                    </small>
+                                                    <!-- TOTAL -->
+                                                    <div class="text-end">
 
-                                                    <h6 class="fw-bold text-success">
-                                                        Rp {{ number_format($subtotal, 0, ',', '.') }}
-                                                    </h6>
+                                                        <small class="text-muted d-block">
+                                                            Total
+                                                        </small>
+
+                                                        <h6 class="fw-bold text-success">
+                                                            Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                        </h6>
+
+                                                    </div>
 
                                                 </div>
 
                                             </div>
-                                        @endforeach
+
+                                        @empty
+
+                                            <div class="alert alert-light">
+                                                Tidak ada item pesanan
+                                            </div>
+                                        @endforelse
 
                                         <!-- TOTAL -->
-                                        <div class="border-top pt-3">
+                                        <div class="border-top pt-3 mt-3">
+
+                                            <div class="d-flex justify-content-between mb-2">
+
+                                                <span>🚚 Ongkir</span>
+
+                                                <strong>
+                                                    Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
+                                                </strong>
+
+                                            </div>
 
                                             <div class="d-flex justify-content-between">
 
                                                 <h5 class="fw-bold">
-                                                    Total Bayar
+                                                    💰 Total Bayar
                                                 </h5>
 
                                                 <h4 class="fw-bold text-success">
