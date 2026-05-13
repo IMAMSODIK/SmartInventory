@@ -6,6 +6,7 @@
 @endsection
 
 @section('content')
+{{dd($userStats)}}
     @if (session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
