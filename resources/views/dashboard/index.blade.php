@@ -445,11 +445,10 @@
                 <div class="container mt-4">
 
                     <!-- TAB -->
-                    <ul class="nav nav-pills mb-4" id="buyerTab">
+                    <ul class="nav nav-pills mb-4">
 
                         <li class="nav-item">
-                            <button class="nav-link active" id="aktif-tab" data-bs-toggle="pill"
-                                data-bs-target="#aktif-order">
+                            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#active-tab">
 
                                 🛒 Order Aktif
 
@@ -457,8 +456,7 @@
                         </li>
 
                         <li class="nav-item ms-2">
-                            <button class="nav-link" id="history-tab" data-bs-toggle="pill"
-                                data-bs-target="#history-order">
+                            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#history-tab">
 
                                 📜 History Order
 
@@ -467,63 +465,110 @@
 
                     </ul>
 
-                    <!-- CONTENT -->
                     <div class="tab-content">
 
-                        <!-- ORDER AKTIF -->
-                        <div class="tab-pane fade show active" id="aktif-order">
+                        <!-- ACTIVE -->
+                        <div class="tab-pane fade show active" id="active-tab">
 
-                            @forelse($activeOrders as $order)
-                                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            @forelse($activeOrders ?? [] as $order)
+                                @php
 
-                                    <div class="card-body">
+                                    $firstItem = $order->items->first();
 
-                                        <div class="d-flex justify-content-between">
+                                    $img = asset('storage/default.png');
 
-                                            <h5 class="fw-bold text-success">
-                                                #{{ $order->order_id }}
-                                            </h5>
+                                    if ($firstItem && $firstItem->produk && $firstItem->produk->fotoProduk->count()) {
+                                        $img = asset('storage/' . $firstItem->produk->fotoProduk->first()->image);
+                                    }
 
-                                            <span class="badge bg-primary">
-                                                {{ strtoupper($order->status) }}
-                                            </span>
+                                @endphp
+
+                                <div class="card border-0 shadow rounded-4 mb-4">
+
+                                    <div class="row g-0">
+
+                                        <!-- IMAGE -->
+                                        <div class="col-md-3">
+
+                                            <img src="{{ $img }}"
+                                                class="img-fluid rounded-start h-100 object-fit-cover">
 
                                         </div>
 
-                                        <hr>
+                                        <!-- CONTENT -->
+                                        <div class="col-md-9">
 
-                                        <p class="mb-1">
-                                            <strong>Alamat:</strong>
-                                            {{ $order->alamat->full_address }}
-                                        </p>
+                                            <div class="card-body">
 
-                                        <p class="mb-3">
-                                            <strong>Total:</strong>
-                                            Rp {{ number_format($order->total, 0, ',', '.') }}
-                                        </p>
+                                                <div class="d-flex justify-content-between">
 
-                                        <h6 class="fw-bold">
-                                            Barang:
-                                        </h6>
+                                                    <h5 class="fw-bold text-success">
+                                                        #{{ $order->order_id }}
+                                                    </h5>
 
-                                        <ul class="list-group">
-
-                                            @foreach($order->items ?? [] as $item)
-                                                <li class="list-group-item d-flex justify-content-between">
-
-                                                    <span>
-                                                        {{ $item->nama_produk }}
-                                                        x {{ $item->qty }}
+                                                    <span class="badge bg-primary">
+                                                        {{ strtoupper($order->status) }}
                                                     </span>
 
-                                                    <strong>
-                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
-                                                    </strong>
+                                                </div>
 
-                                                </li>
-                                            @endforeach
+                                                <p class="text-muted mb-2">
+                                                    {{ $order->alamat->full_address }}
+                                                </p>
 
-                                        </ul>
+                                                <hr>
+
+                                                <!-- ITEM -->
+                                                @foreach ($order->items ?? [] as $item)
+                                                    <div class="d-flex justify-content-between mb-2">
+
+                                                        <div>
+                                                            {{ $item->nama_produk }}
+                                                            x {{ $item->qty }}
+                                                        </div>
+
+                                                        <strong>
+                                                            Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
+                                                        </strong>
+
+                                                    </div>
+                                                @endforeach
+
+                                                <hr>
+
+                                                <div class="d-flex justify-content-between align-items-center">
+
+                                                    <div>
+
+                                                        <small>Total Pembayaran</small>
+
+                                                        <h5 class="fw-bold text-success mb-0">
+                                                            Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                        </h5>
+
+                                                    </div>
+
+                                                    <!-- AKSI -->
+                                                    @if ($order->status == 'shipping')
+                                                        <form method="POST"
+                                                            action="/buyer/order/{{ $order->id }}/received">
+
+                                                            @csrf
+
+                                                            <button class="btn btn-success rounded-pill">
+
+                                                                ✅ Sudah Diterima
+
+                                                            </button>
+
+                                                        </form>
+                                                    @endif
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
 
                                     </div>
 
@@ -539,65 +584,90 @@
                         </div>
 
                         <!-- HISTORY -->
-                        <div class="tab-pane fade" id="history-order">
+                        <div class="tab-pane fade" id="history-tab">
 
-                            @forelse($historyOrders as $order)
-                                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                            @forelse($historyOrders ?? [] as $order)
+                                @php
 
-                                    <div class="card-body">
+                                    $firstItem = $order->items->first();
 
-                                        <div class="d-flex justify-content-between">
+                                    $img = asset('storage/default.png');
 
-                                            <h5 class="fw-bold">
-                                                #{{ $order->order_id }}
-                                            </h5>
+                                    if ($firstItem && $firstItem->produk && $firstItem->produk->fotoProduk->count()) {
+                                        $img = asset('storage/' . $firstItem->produk->fotoProduk->first()->image);
+                                    }
 
-                                            @if ($order->status == 'delivered')
-                                                <span class="badge bg-success">
-                                                    SELESAI
-                                                </span>
-                                            @elseif($order->status == 'cancelled')
-                                                <span class="badge bg-danger">
-                                                    DIBATALKAN
-                                                </span>
-                                            @else
-                                                <span class="badge bg-secondary">
-                                                    {{ strtoupper($order->status) }}
-                                                </span>
-                                            @endif
+                                @endphp
+
+                                <div class="card border-0 shadow rounded-4 mb-4">
+
+                                    <div class="row g-0">
+
+                                        <div class="col-md-3">
+
+                                            <img src="{{ $img }}"
+                                                class="img-fluid rounded-start h-100 object-fit-cover">
 
                                         </div>
 
-                                        <hr>
+                                        <div class="col-md-9">
 
-                                        <p class="mb-1">
-                                            <strong>Alamat:</strong>
-                                            {{ $order->alamat->full_address }}
-                                        </p>
+                                            <div class="card-body">
 
-                                        <p class="mb-3">
-                                            <strong>Total:</strong>
-                                            Rp {{ number_format($order->total, 0, ',', '.') }}
-                                        </p>
+                                                <div class="d-flex justify-content-between">
 
-                                        <ul class="list-group">
+                                                    <h5 class="fw-bold">
+                                                        #{{ $order->order_id }}
+                                                    </h5>
 
-                                            @foreach($order->items ?? [] as $item)
-                                                <li class="list-group-item d-flex justify-content-between">
+                                                    @if ($order->status == 'delivered')
+                                                        <span class="badge bg-success">
+                                                            SELESAI
+                                                        </span>
+                                                    @elseif($order->status == 'cancelled')
+                                                        <span class="badge bg-danger">
+                                                            DIBATALKAN
+                                                        </span>
+                                                    @endif
 
-                                                    <span>
-                                                        {{ $item->nama_produk }}
-                                                        x {{ $item->qty }}
-                                                    </span>
+                                                </div>
 
-                                                    <strong>
-                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
-                                                    </strong>
+                                                <p class="text-muted">
+                                                    {{ $order->alamat->full_address }}
+                                                </p>
 
-                                                </li>
-                                            @endforeach
+                                                <hr>
 
-                                        </ul>
+                                                @foreach ($order->items ?? [] as $item)
+                                                    <div class="d-flex justify-content-between mb-2">
+
+                                                        <div>
+                                                            {{ $item->nama_produk }}
+                                                            x {{ $item->qty }}
+                                                        </div>
+
+                                                        <strong>
+                                                            Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
+                                                        </strong>
+
+                                                    </div>
+                                                @endforeach
+
+                                                <hr>
+
+                                                <div class="d-flex justify-content-between">
+
+                                                    <small>Total Pembayaran</small>
+
+                                                    <h5 class="fw-bold text-success">
+                                                        Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                    </h5>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
 
                                     </div>
 
