@@ -354,7 +354,8 @@
                                     class="f-light f-w-500 f-14">Total Order</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">{{ $totalOrderSelesai ?? 0 }}</h2><span class="f-12 f-w-400">(Order Selesai)</span>
+                                        <h2 class="f-w-600">{{ $totalOrderSelesai ?? 0 }}</h2><span
+                                            class="f-12 f-w-400">(Order Selesai)</span>
                                     </div>
                                 </div>
                                 <ul class="bubbles">
@@ -377,7 +378,8 @@
                                     class="f-light f-w-500 f-14">Total Pendapatan</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h2>
+                                        <h2 class="f-w-600">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}
+                                        </h2>
                                     </div>
                                 </div>
                                 <ul class="bubbles">
@@ -431,6 +433,182 @@
                         <div class="tab-pane fade" id="history-order">
 
                             <div id="historyOrders"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            @endif
+
+            @if (auth()->user()->role == 'pembeli')
+                <div class="container mt-4">
+
+                    <!-- TAB -->
+                    <ul class="nav nav-pills mb-4" id="buyerTab">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" id="aktif-tab" data-bs-toggle="pill"
+                                data-bs-target="#aktif-order">
+
+                                🛒 Order Aktif
+
+                            </button>
+                        </li>
+
+                        <li class="nav-item ms-2">
+                            <button class="nav-link" id="history-tab" data-bs-toggle="pill"
+                                data-bs-target="#history-order">
+
+                                📜 History Order
+
+                            </button>
+                        </li>
+
+                    </ul>
+
+                    <!-- CONTENT -->
+                    <div class="tab-content">
+
+                        <!-- ORDER AKTIF -->
+                        <div class="tab-pane fade show active" id="aktif-order">
+
+                            @forelse($activeOrders as $order)
+                                <div class="card shadow-sm border-0 rounded-4 mb-4">
+
+                                    <div class="card-body">
+
+                                        <div class="d-flex justify-content-between">
+
+                                            <h5 class="fw-bold text-success">
+                                                #{{ $order->order_id }}
+                                            </h5>
+
+                                            <span class="badge bg-primary">
+                                                {{ strtoupper($order->status) }}
+                                            </span>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <p class="mb-1">
+                                            <strong>Alamat:</strong>
+                                            {{ $order->alamat->full_address }}
+                                        </p>
+
+                                        <p class="mb-3">
+                                            <strong>Total:</strong>
+                                            Rp {{ number_format($order->total, 0, ',', '.') }}
+                                        </p>
+
+                                        <h6 class="fw-bold">
+                                            Barang:
+                                        </h6>
+
+                                        <ul class="list-group">
+
+                                            @foreach ($order->items as $item)
+                                                <li class="list-group-item d-flex justify-content-between">
+
+                                                    <span>
+                                                        {{ $item->nama_produk }}
+                                                        x {{ $item->qty }}
+                                                    </span>
+
+                                                    <strong>
+                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </li>
+                                            @endforeach
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+                            @empty
+
+                                <div class="alert alert-secondary">
+                                    Tidak ada order aktif
+                                </div>
+                            @endforelse
+
+                        </div>
+
+                        <!-- HISTORY -->
+                        <div class="tab-pane fade" id="history-order">
+
+                            @forelse($historyOrders as $order)
+                                <div class="card shadow-sm border-0 rounded-4 mb-4">
+
+                                    <div class="card-body">
+
+                                        <div class="d-flex justify-content-between">
+
+                                            <h5 class="fw-bold">
+                                                #{{ $order->order_id }}
+                                            </h5>
+
+                                            @if ($order->status == 'delivered')
+                                                <span class="badge bg-success">
+                                                    SELESAI
+                                                </span>
+                                            @elseif($order->status == 'cancelled')
+                                                <span class="badge bg-danger">
+                                                    DIBATALKAN
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary">
+                                                    {{ strtoupper($order->status) }}
+                                                </span>
+                                            @endif
+
+                                        </div>
+
+                                        <hr>
+
+                                        <p class="mb-1">
+                                            <strong>Alamat:</strong>
+                                            {{ $order->alamat->full_address }}
+                                        </p>
+
+                                        <p class="mb-3">
+                                            <strong>Total:</strong>
+                                            Rp {{ number_format($order->total, 0, ',', '.') }}
+                                        </p>
+
+                                        <ul class="list-group">
+
+                                            @foreach ($order->items as $item)
+                                                <li class="list-group-item d-flex justify-content-between">
+
+                                                    <span>
+                                                        {{ $item->nama_produk }}
+                                                        x {{ $item->qty }}
+                                                    </span>
+
+                                                    <strong>
+                                                        Rp {{ number_format($item->harga * $item->qty, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </li>
+                                            @endforeach
+
+                                        </ul>
+
+                                    </div>
+
+                                </div>
+
+                            @empty
+
+                                <div class="alert alert-secondary">
+                                    Belum ada history order
+                                </div>
+                            @endforelse
 
                         </div>
 

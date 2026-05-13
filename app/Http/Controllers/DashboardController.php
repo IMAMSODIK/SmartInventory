@@ -93,6 +93,41 @@ class DashboardController extends Controller
                     'totalOrderSelesai',
                     'totalPendapatan'
                 ));
+            } elseif ($user->role === 'pembeli') {
+
+                // ORDER AKTIF
+                $activeOrders = Order::with([
+                    'orderItem',
+                    'alamat'
+                ])
+                    ->where('buyer_id', $user->id)
+                    ->whereNotIn('status', [
+                        'delivered',
+                        'cancelled',
+                        'expired'
+                    ])
+                    ->latest()
+                    ->get();
+
+                // HISTORY ORDER
+                $historyOrders = Order::with([
+                    'items',
+                    'alamat'
+                ])
+                    ->where('buyer_id', $user->id)
+                    ->whereIn('status', [
+                        'delivered',
+                        'cancelled',
+                        'expired'
+                    ])
+                    ->latest()
+                    ->get();
+
+                return view('dashboard.index', compact(
+                    'pageTitle',
+                    'activeOrders',
+                    'historyOrders'
+                ));
             } else {
                 return view('dashboard.index', compact('pageTitle'));
             }
