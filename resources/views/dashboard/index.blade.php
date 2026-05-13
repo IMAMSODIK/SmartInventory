@@ -442,7 +442,7 @@
             @endif
 
             @if (auth()->user()->role == 'pembeli')
-                <div class="container mt-4">
+                {{-- <div class="container mt-4">
 
                     <!-- TAB -->
                     <ul class="nav nav-pills mb-4">
@@ -752,7 +752,7 @@
 
                     </div>
 
-                </div>
+                </div> --}}
             @endif
         </div>
 
