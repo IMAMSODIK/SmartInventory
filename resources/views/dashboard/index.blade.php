@@ -6,7 +6,6 @@
 @endsection
 
 @section('content')
-{{dd($total_user)}}
     @if (session('error'))
         <div class="alert alert-danger">
             {{ session('error') }}
@@ -41,7 +40,7 @@
                                     class="f-light f-w-500 f-14">Total Pengguna</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">{{ $data['total_user'] }}</h2><span
+                                        <h2 class="f-w-600">{{ $total_user }}</h2><span
                                             class="f-12 f-w-400">(Pengguna)</span>
                                     </div>
                                     <div class="product-sub bg-primary-light">
@@ -68,7 +67,7 @@
                                     class="f-light f-w-500 f-14">Total Pedagang</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">{{ $data['total_pedagang'] }}</h2><span
+                                        <h2 class="f-w-600">{{ $total_pedagang }}</h2><span
                                             class="f-12 f-w-400">(Pedagang) </span>
                                     </div>
                                     <div class="product-sub bg-warning-light">
@@ -95,7 +94,7 @@
                                     class="f-light f-w-500 f-14">Total Customer</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">{{ $data['total_pembeli'] }}</h2><span
+                                        <h2 class="f-w-600">{{ $total_pembeli }}</h2><span
                                             class="f-12 f-w-400">(Customer) </span>
                                     </div>
                                     <div class="product-sub bg-secondary-light">
@@ -125,7 +124,7 @@
                             <div class="card-body total-upcoming"><span class="f-light f-w-500 f-14">Total Driver</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">{{ $data['total_kurir'] }}</h2><span
+                                        <h2 class="f-w-600">{{ $total_kurir }}</h2><span
                                             class="f-12 f-w-400">(Driver) </span>
                                     </div>
                                     <div class="product-sub bg-light-light">
