@@ -914,12 +914,9 @@
                 },
 
                 success: function(res) {
-
-                    console.log(res);
-
                     let html = '';
 
-                    if (!res.order_item || res.order_item.length === 0) {
+                    if (!res.items || res.items.length === 0) {
 
                         html = `
                 <div class="alert alert-warning">
@@ -929,7 +926,7 @@
 
                     } else {
 
-                        res.order_item.forEach(item => {
+                        res.items.forEach(item => {
 
                             html += `
                     <div class="border rounded-4 p-3 mb-3">
