@@ -508,7 +508,7 @@
 
                                         <ul class="list-group">
 
-                                            @foreach ($order->items as $item)
+                                            @foreach($order->items ?? [] as $item)
                                                 <li class="list-group-item d-flex justify-content-between">
 
                                                     <span>
@@ -582,7 +582,7 @@
 
                                         <ul class="list-group">
 
-                                            @foreach ($order->items as $item)
+                                            @foreach($order->items ?? [] as $item)
                                                 <li class="list-group-item d-flex justify-content-between">
 
                                                     <span>
