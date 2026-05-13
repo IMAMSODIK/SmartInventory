@@ -17,6 +17,8 @@
 
 <body class="bg-gray-50">
 
+    {{$error}}
+
     <div id="overlay" class="overlay fixed inset-0 bg-black/50"></div>
 
     <aside id="sidebar" class="sidebar fixed top-0 left-0 w-72 h-full bg-white shadow-2xl z-50 flex flex-col">
