@@ -484,6 +484,49 @@
                                                     #{{ $order->order_id }}
                                                 </h5>
 
+                                                <div class="mt-2">
+
+                                                    @foreach ($order->items ?? [] as $item)
+                                                        @php
+                                                            $subtotal = $item->harga * $item->qty;
+                                                        @endphp
+
+                                                        <div class="small text-muted mb-1">
+
+                                                            • {{ $item->nama_produk }}
+                                                            x {{ $item->qty }}
+
+                                                            =
+
+                                                            <strong>
+                                                                Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                            </strong>
+
+                                                        </div>
+                                                    @endforeach
+
+                                                </div>
+
+                                                <!-- ONGKIR -->
+                                                <div class="mt-2 small">
+
+                                                    🚚 Ongkir:
+                                                    <strong>
+                                                        Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </div>
+
+                                                <!-- TOTAL -->
+                                                <div class="small">
+
+                                                    💰 Total:
+                                                    <strong class="text-success">
+                                                        Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </div>
+
                                                 <small class="text-muted">
                                                     {{ $order->created_at->format('d M Y H:i') }}
                                                 </small>
@@ -502,7 +545,7 @@
                                         </p>
 
                                         <!-- LIST PRODUK -->
-                                        @foreach($order->items ?? [] as $item)
+                                        @foreach ($order->items ?? [] as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
@@ -641,6 +684,49 @@
                                                     #{{ $order->order_id }}
                                                 </h5>
 
+                                                <div class="mt-2">
+
+                                                    @foreach ($order->items ?? [] as $item)
+                                                        @php
+                                                            $subtotal = $item->harga * $item->qty;
+                                                        @endphp
+
+                                                        <div class="small text-muted mb-1">
+
+                                                            • {{ $item->nama_produk }}
+                                                            x {{ $item->qty }}
+
+                                                            =
+
+                                                            <strong>
+                                                                Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                                            </strong>
+
+                                                        </div>
+                                                    @endforeach
+
+                                                </div>
+
+                                                <!-- ONGKIR -->
+                                                <div class="mt-2 small">
+
+                                                    🚚 Ongkir:
+                                                    <strong>
+                                                        Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </div>
+
+                                                <!-- TOTAL -->
+                                                <div class="small">
+
+                                                    💰 Total:
+                                                    <strong class="text-success">
+                                                        Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                    </strong>
+
+                                                </div>
+
                                                 <small class="text-muted">
                                                     {{ $order->created_at->format('d M Y H:i') }}
                                                 </small>
@@ -664,7 +750,7 @@
                                         </div>
 
                                         <!-- LIST ITEM -->
-                                        @foreach($order->items ?? [] as $item)
+                                        @foreach ($order->items ?? [] as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
