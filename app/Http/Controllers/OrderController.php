@@ -449,7 +449,7 @@ class OrderController extends Controller
 
             // UPDATE ORDER
             $order->update([
-                'status' => 'delivered',
+                'status' => 'selesai',
                 'is_reviewed' => true
             ]);
 
