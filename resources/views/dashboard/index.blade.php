@@ -502,7 +502,7 @@
                                         </p>
 
                                         <!-- LIST PRODUK -->
-                                        @foreach ($order->items as $item)
+                                        @foreach($order->items ?? [] as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
@@ -664,7 +664,7 @@
                                         </div>
 
                                         <!-- LIST ITEM -->
-                                        @foreach ($order->items as $item)
+                                        @foreach($order->items ?? [] as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
