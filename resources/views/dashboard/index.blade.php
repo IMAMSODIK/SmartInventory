@@ -31,8 +31,8 @@
             </div>
         </div>
 
-        <div class="container-fluid">
-            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'pedagang')
+        @if (auth()->user()->role == 'admin')
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-xl-3 col-sm-6">
                         <div class="card o-hidden small-widget">
@@ -146,7 +146,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        @endif
 
+        @if (auth()->user()->role == 'admin' || auth()->user()->role == 'pedagang')
+            <div class="container-fluid">
                 <div class="row">
 
                     <!-- ORDER -->
@@ -346,9 +350,11 @@
                     </div>
 
                 </div>
-            @endif
+            </div>
+        @endif
 
-            @if (auth()->user()->role == 'kurir')
+        @if (auth()->user()->role == 'kurir')
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-xl-2 col-6">
                         <div class="card o-hidden small-widget">
@@ -441,9 +447,11 @@
                     </div>
 
                 </div>
-            @endif
+            </div>
+        @endif
 
-            @if (auth()->user()->role == 'pembeli')
+        @if (auth()->user()->role == 'pembeli')
+            <div class="container-fluid">
                 <div class="container mt-4">
 
                     <!-- TAB -->
@@ -801,8 +809,8 @@
                     </div>
 
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
 
         <div class="container-fluid">
             <div class="row size-column">
