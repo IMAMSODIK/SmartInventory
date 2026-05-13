@@ -20,59 +20,72 @@ class DashboardController extends Controller
             $user = auth()->user();
             $today = Carbon::today();
 
-            $isAdmin = $user->role === 'admin';
-            $profileId = $user->profileUsaha?->id;
-
             /*
         |--------------------------------------------------
-        | BASE ORDER QUERY (ADMIN / PENJUAL)
-        |--------------------------------------------------
-        */
-            $orderQuery = Order::query();
-
-            if ($user->role === 'pedagang') {
-
-                if (!$profileId) {
-                    return back()->with('error', 'Profile usaha belum dibuat');
-                }
-
-                $orderQuery->whereHas('orderItem.produk', function ($q) use ($profileId) {
-                    $q->where('profile_usaha_id', $profileId);
-                });
-            }
-
-            /*
-        |--------------------------------------------------
-        | ADMIN / PENJUAL DASHBOARD
+        | ADMIN & PENJUAL SHARED LOGIC
         |--------------------------------------------------
         */
             if ($user->role === 'admin' || $user->role === 'pedagang') {
 
-                $userStats = $isAdmin ? [
-                    'total_user' => User::where('role', '!=', 'admin')->count(),
-                    'total_pedagang' => User::where('role', 'pedagang')->count(),
-                    'total_pembeli' => User::where('role', 'pembeli')->count(),
-                    'total_kurir' => User::where('role', 'kurir')->count(),
-                ] : [];
+                // BASE ORDER QUERY
+                $baseOrderQuery = Order::query();
 
+                // 🔥 FILTER KHUSUS PENJUAL
+                if ($user->role === 'pedagang') {
+
+                    if (!$user->profileUsaha) {
+                        return back()->with('error', 'Profile usaha belum dibuat');
+                    }
+
+                    $baseOrderQuery->whereHas('orderItem.produk', function ($q) use ($user) {
+                        $q->where('profile_usaha_id', $user->profileUsaha->id);
+                    });
+                }
+
+                /*
+            |--------------------------------------------------
+            | USER STATS (HANYA ADMIN)
+            |--------------------------------------------------
+            */
+                $userStats = [];
+
+                if ($user->role === 'admin') {
+                    $userStats = [
+                        'total_user' => User::where('role', '!=', 'admin')->count(),
+                        'total_pedagang' => User::where('role', 'pedagang')->count(),
+                        'total_pembeli' => User::where('role', 'pembeli')->count(),
+                        'total_kurir' => User::where('role', 'kurir')->count(),
+                    ];
+                }
+
+                /*
+            |--------------------------------------------------
+            | ORDER OVERVIEW
+            |--------------------------------------------------
+            */
                 $orderOverview = [
                     'today' => [
-                        'total' => (clone $orderQuery)->whereDate('created_at', $today)->count(),
-                        'pending' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'pending')->count(),
-                        'processing' => (clone $orderQuery)->whereDate('created_at', $today)->whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'shipping')->count(),
-                        'delivered' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'selesai')->count(),
+                        'total' => (clone $baseOrderQuery)->whereDate('created_at', $today)->count(),
+                        'pending' => (clone $baseOrderQuery)->whereDate('created_at', $today)->where('status', 'pending')->count(),
+                        'processing' => (clone $baseOrderQuery)->whereDate('created_at', $today)->whereIn('status', ['paid', 'processing'])->count(),
+                        'shipping' => (clone $baseOrderQuery)->whereDate('created_at', $today)->where('status', 'shipping')->count(),
+                        'delivered' => (clone $baseOrderQuery)->whereDate('created_at', $today)->where('status', 'selesai')->count(),
                     ],
                     'all' => [
-                        'total' => (clone $orderQuery)->count(),
-                        'pending' => (clone $orderQuery)->where('status', 'pending')->count(),
-                        'processing' => (clone $orderQuery)->whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => (clone $orderQuery)->where('status', 'shipping')->count(),
-                        'delivered' => (clone $orderQuery)->where('status', 'selesai')->count(),
+                        'total' => (clone $baseOrderQuery)->count(),
+                        'pending' => (clone $baseOrderQuery)->where('status', 'pending')->count(),
+                        'processing' => (clone $baseOrderQuery)->whereIn('status', ['paid', 'processing'])->count(),
+                        'shipping' => (clone $baseOrderQuery)->where('status', 'shipping')->count(),
+                        'delivered' => (clone $baseOrderQuery)->where('status', 'selesai')->count(),
                     ],
                 ];
 
-                $revenueQuery = (clone $orderQuery)->where('status', 'selesai');
+                /*
+            |--------------------------------------------------
+            | REVENUE
+            |--------------------------------------------------
+            */
+                $revenueQuery = (clone $baseOrderQuery)->where('status', 'selesai');
 
                 $revenue = [
                     'revenue_today' => (clone $revenueQuery)
@@ -86,12 +99,12 @@ class DashboardController extends Controller
                     'pageTitle' => $pageTitle,
                     'orderOverview' => $orderOverview,
                     'revenue' => $revenue,
-                ], $userStats ?? []));
+                ], $userStats));
             }
 
             /*
         |--------------------------------------------------
-        | KURIR DASHBOARD
+        | KURIR (TIDAK DIUBAH)
         |--------------------------------------------------
         */
             if ($user->role === 'kurir') {
@@ -132,7 +145,7 @@ class DashboardController extends Controller
 
             /*
         |--------------------------------------------------
-        | PEMBELI DASHBOARD
+        | PEMBELI (TIDAK DIUBAH)
         |--------------------------------------------------
         */
             if ($user->role === 'pembeli') {
