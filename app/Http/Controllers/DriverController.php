@@ -17,14 +17,58 @@ class DriverController extends Controller
     public function index()
     {
         try {
+
+            $user = User::with('driver')
+                ->where('id', Auth::id())
+                ->first();
+
+            $driverId = $user->driver->id ?? null;
+
+            // ⭐ AVG RATING
+            $rating = DB::table('rating_drivers')
+                ->where('driver_id', $driverId)
+                ->avg('rating');
+
+            // 📝 TOTAL REVIEW
+            $totalReview = DB::table('rating_drivers')
+                ->where('driver_id', $driverId)
+                ->count();
+
+            // 🚚 TOTAL DELIVERY
+            $totalDelivery = DB::table('order_items')
+                ->where('driver_id', $driverId)
+                ->where('delivery_status', 'delivered')
+                ->count();
+
+            // 💰 TOTAL PENDAPATAN
+            $totalIncome = DB::table('orders')
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->where('order_items.driver_id', $driverId)
+                ->where('order_items.delivery_status', 'delivered')
+                ->sum('orders.shipping_cost');
+
             $data = [
+
                 'pageTitle' => "Profile Driver",
-                'data' => User::where('id', Auth::id())->with('driver')->first()
+
+                'data' => $user,
+
+                'rating' => round($rating ?? 0, 1),
+
+                'totalReview' => $totalReview,
+
+                'totalDelivery' => $totalDelivery,
+
+                'totalIncome' => $totalIncome
+
             ];
 
             return view('profile.profile_driver', $data);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memuat data.');
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
         }
     }
 

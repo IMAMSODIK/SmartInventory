@@ -71,10 +71,83 @@
                                                             value="{{ $data->driver->plate_number ?? '' }}" readonly>
                                                     </div>
 
-                                                    <div class="row mb-4" style="margin-right: 10px">
-                                                        <label class="form-label">Rating</label>
-                                                        <input class="form-control" type="text"
-                                                            value="{{ $data->driver->rating ?? '' }}" readonly>
+                                                    <div class="row">
+
+                                                        <!-- RATING -->
+                                                        <div class="col-md-3 mb-3">
+
+                                                            <div class="card border-0 shadow rounded-4">
+
+                                                                <div class="card-body text-center">
+
+                                                                    <h6 class="text-muted">
+                                                                        Rating
+                                                                    </h6>
+
+                                                                    <h2 class="fw-bold text-warning">
+
+                                                                        ⭐ {{ $rating }}
+
+                                                                    </h2>
+
+                                                                    <small class="text-muted">
+
+                                                                        {{ $totalReview }} Review
+
+                                                                    </small>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <!-- DELIVERY -->
+                                                        <div class="col-md-3 mb-3">
+
+                                                            <div class="card border-0 shadow rounded-4">
+
+                                                                <div class="card-body text-center">
+
+                                                                    <h6 class="text-muted">
+                                                                        Total Pengantaran
+                                                                    </h6>
+
+                                                                    <h2 class="fw-bold text-primary">
+
+                                                                        {{ $totalDelivery }}
+
+                                                                    </h2>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <!-- PENDAPATAN -->
+                                                        <div class="col-md-3 mb-3">
+
+                                                            <div class="card border-0 shadow rounded-4">
+
+                                                                <div class="card-body text-center">
+
+                                                                    <h6 class="text-muted">
+                                                                        Pendapatan
+                                                                    </h6>
+
+                                                                    <h2 class="fw-bold text-success">
+
+                                                                        Rp {{ number_format($totalIncome, 0, ',', '.') }}
+
+                                                                    </h2>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+
                                                     </div>
 
                                                     <div class="row" style="margin-right: 10px">
