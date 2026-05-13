@@ -68,4 +68,5 @@ kurir bisa on off padahal belum approve admin (done)
 tombol approve produk masih muncul di pedagang (done)
 tambahkan tombol ke marketplace untuk semua (done)
 hitung ongkir masih muncul saat sudah bayar (done)
-total bayar belum hitung ongkir
+total bayar belum hitung ongkir (done)
+belum selesai pembayaran, tapi kurir sudah dapat notif

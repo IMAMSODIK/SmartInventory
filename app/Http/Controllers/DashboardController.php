@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Exception;
@@ -52,11 +53,49 @@ class DashboardController extends Controller
                         ->sum('total')
                 ];
                 return view('dashboard.index', compact('pageTitle', 'data', 'orderOverview', 'revenue'));
-            }else{
+            } elseif ($user->role === 'kurir') {
+
+                $driver = $user->driver;
+
+                $totalOrderSelesai = 0;
+                $totalPendapatan = 0;
+
+                if ($driver) {
+
+                    // total order selesai
+                    $totalOrderSelesai = OrderItem::where('driver_id', $driver->id)
+                        ->where('delivery_status', 'delivered')
+                        ->distinct('order_id')
+                        ->count('order_id');
+
+                    // total pendapatan driver
+                    // contoh: ongkir dibagi per order
+                    $orders = Order::whereHas('orderItem', function ($q) use ($driver) {
+                        $q->where('driver_id', $driver->id)
+                            ->where('delivery_status', 'delivered');
+                    })
+                        ->get();
+
+                    foreach ($orders as $order) {
+
+                        $jumlahDriverDalamOrder = OrderItem::where('order_id', $order->id)
+                            ->distinct('driver_id')
+                            ->count('driver_id');
+
+                        // pembagian ongkir jika lebih dari 1 driver
+                        $totalPendapatan +=
+                            $order->shipping_cost / max($jumlahDriverDalamOrder, 1);
+                    }
+                }
+
+                return view('dashboard.index', compact(
+                    'pageTitle',
+                    'totalOrderSelesai',
+                    'totalPendapatan'
+                ));
+            } else {
                 return view('dashboard.index', compact('pageTitle'));
             }
-
-            
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
