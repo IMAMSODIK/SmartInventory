@@ -432,7 +432,6 @@ class OrderController extends Controller
     {
         $order = Order::with('items')
             ->findOrFail($id);
-        dd($order);
 
         return response()->json([
             'items' => $order->items

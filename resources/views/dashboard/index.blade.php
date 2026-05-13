@@ -915,6 +915,8 @@
 
                 success: function(res) {
 
+                    console.log(res);
+
                     let html = '';
 
                     if (!res.order_item || res.order_item.length === 0) {
