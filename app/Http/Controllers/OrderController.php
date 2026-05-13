@@ -310,9 +310,9 @@ class OrderController extends Controller
             }
 
             if ($request->status == 'done') {
-                $query->where('status', 'delivered');
+                $query->where('status', 'selesai');
             } else {
-                $query->whereIn('status', ['pending', 'paid', 'processing', 'shipping', 'delivered']);
+                $query->whereIn('status', ['delivered', 'pending', 'paid', 'processing', 'shipping', 'delivered']);
             }
 
             $orders = $query->latest()->get();
