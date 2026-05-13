@@ -182,6 +182,7 @@ class DashboardController extends Controller
         */
             return view('dashboard.index', compact('pageTitle'));
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return back()->with('error', $e->getMessage());
         }
     }
