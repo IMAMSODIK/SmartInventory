@@ -46,10 +46,10 @@ class DashboardController extends Controller
                     ],
                 ];
                 $revenue = [
-                    'revenue_today' => Order::where('status', 'delivered')
+                    'revenue_today' => Order::where('status', 'selesai')
                         ->whereDate('created_at', $today)
                         ->sum('total'),
-                    'revenue_all' => Order::where('status', 'delivered')
+                    'revenue_all' => Order::where('status', 'selesai')
                         ->sum('total')
                 ];
                 return view('dashboard.index', compact('pageTitle', 'data', 'orderOverview', 'revenue'));
