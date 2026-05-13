@@ -430,7 +430,7 @@ class OrderController extends Controller
 
     public function orderDetail($id)
     {
-        $order = Order::with('items')
+        $order = Order::with('orderItem')
             ->findOrFail($id);
 
         return response()->json([
