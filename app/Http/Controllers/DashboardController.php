@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Exception;
@@ -14,46 +15,86 @@ class DashboardController extends Controller
     public function index()
     {
         try {
+
             $pageTitle = 'Dashboard';
             $user = auth()->user();
+            $today = Carbon::today();
 
-            $data = [];
+            $isAdmin = $user->role === 'admin';
+            $profileId = $user->profileUsaha?->id;
 
-            if ($user->role === 'admin') {
-                $today = Carbon::today();
-                $data = [
-                    //user
-                    'total_user' => \App\Models\User::where('role', '!=', 'admin')->count(),
-                    'total_pedagang' => \App\Models\User::where('role', 'pedagang')->count(),
-                    'total_pembeli' => \App\Models\User::where('role', 'pembeli')->count(),
-                    'total_kurir' => \App\Models\User::where('role', 'kurir')->count(),
-                ];
+            /*
+        |--------------------------------------------------
+        | BASE ORDER QUERY (ADMIN / PENJUAL)
+        |--------------------------------------------------
+        */
+            $orderQuery = Order::query();
+
+            if ($user->role === 'pedagang') {
+
+                if (!$profileId) {
+                    return back()->with('error', 'Profile usaha belum dibuat');
+                }
+
+                $orderQuery->whereHas('orderItem.produk', function ($q) use ($profileId) {
+                    $q->where('profile_usaha_id', $profileId);
+                });
+            }
+
+            /*
+        |--------------------------------------------------
+        | ADMIN / PENJUAL DASHBOARD
+        |--------------------------------------------------
+        */
+            if ($user->role === 'admin' || $user->role === 'pedagang') {
+
+                $userStats = $isAdmin ? [
+                    'total_user' => User::where('role', '!=', 'admin')->count(),
+                    'total_pedagang' => User::where('role', 'pedagang')->count(),
+                    'total_pembeli' => User::where('role', 'pembeli')->count(),
+                    'total_kurir' => User::where('role', 'kurir')->count(),
+                ] : [];
 
                 $orderOverview = [
                     'today' => [
-                        'total' => Order::whereDate('created_at', $today)->count(),
-                        'pending' => Order::whereDate('created_at', $today)->where('status', 'pending')->count(),
-                        'processing' => Order::whereDate('created_at', $today)->whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => Order::whereDate('created_at', $today)->where('status', 'paid')->count(),
-                        'delivered' => Order::whereDate('created_at', $today)->where('status', 'selesai')->count(),
+                        'total' => (clone $orderQuery)->whereDate('created_at', $today)->count(),
+                        'pending' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'pending')->count(),
+                        'processing' => (clone $orderQuery)->whereDate('created_at', $today)->whereIn('status', ['paid', 'processing'])->count(),
+                        'shipping' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'shipping')->count(),
+                        'delivered' => (clone $orderQuery)->whereDate('created_at', $today)->where('status', 'selesai')->count(),
                     ],
                     'all' => [
-                        'total' => Order::count(),
-                        'pending' => Order::where('status', 'pending')->count(),
-                        'processing' => Order::whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => Order::where('status', 'paid')->count(),
-                        'delivered' => Order::where('status', 'selesai')->count(),
+                        'total' => (clone $orderQuery)->count(),
+                        'pending' => (clone $orderQuery)->where('status', 'pending')->count(),
+                        'processing' => (clone $orderQuery)->whereIn('status', ['paid', 'processing'])->count(),
+                        'shipping' => (clone $orderQuery)->where('status', 'shipping')->count(),
+                        'delivered' => (clone $orderQuery)->where('status', 'selesai')->count(),
                     ],
                 ];
+
+                $revenueQuery = (clone $orderQuery)->where('status', 'selesai');
+
                 $revenue = [
-                    'revenue_today' => Order::where('status', 'selesai')
+                    'revenue_today' => (clone $revenueQuery)
                         ->whereDate('created_at', $today)
                         ->sum('total'),
-                    'revenue_all' => Order::where('status', 'selesai')
-                        ->sum('total')
+
+                    'revenue_all' => (clone $revenueQuery)->sum('total'),
                 ];
-                return view('dashboard.index', compact('pageTitle', 'data', 'orderOverview', 'revenue'));
-            } elseif ($user->role === 'kurir') {
+
+                return view('dashboard.index', array_merge([
+                    'pageTitle' => $pageTitle,
+                    'orderOverview' => $orderOverview,
+                    'revenue' => $revenue,
+                ], $userStats ?? []));
+            }
+
+            /*
+        |--------------------------------------------------
+        | KURIR DASHBOARD
+        |--------------------------------------------------
+        */
+            if ($user->role === 'kurir') {
 
                 $driver = $user->driver;
 
@@ -62,29 +103,23 @@ class DashboardController extends Controller
 
                 if ($driver) {
 
-                    // total order selesai
                     $totalOrderSelesai = OrderItem::where('driver_id', $driver->id)
                         ->where('delivery_status', 'delivered')
                         ->distinct('order_id')
                         ->count('order_id');
 
-                    // total pendapatan driver
-                    // contoh: ongkir dibagi per order
                     $orders = Order::whereHas('orderItem', function ($q) use ($driver) {
                         $q->where('driver_id', $driver->id)
                             ->where('delivery_status', 'delivered');
-                    })
-                        ->get();
+                    })->get();
 
                     foreach ($orders as $order) {
 
-                        $jumlahDriverDalamOrder = OrderItem::where('order_id', $order->id)
+                        $driverCount = OrderItem::where('order_id', $order->id)
                             ->distinct('driver_id')
                             ->count('driver_id');
 
-                        // pembagian ongkir jika lebih dari 1 driver
-                        $totalPendapatan +=
-                            $order->shipping_cost / max($jumlahDriverDalamOrder, 1);
+                        $totalPendapatan += $order->shipping_cost / max($driverCount, 1);
                     }
                 }
 
@@ -93,35 +128,30 @@ class DashboardController extends Controller
                     'totalOrderSelesai',
                     'totalPendapatan'
                 ));
-            } elseif ($user->role === 'pembeli') {
+            }
+
+            /*
+        |--------------------------------------------------
+        | PEMBELI DASHBOARD
+        |--------------------------------------------------
+        */
+            if ($user->role === 'pembeli') {
 
                 $activeOrders = Order::with([
                     'alamat',
-                    'orderItem',
-                    'orderItem.produk',
                     'orderItem.produk.fotoProduk'
                 ])
                     ->where('buyer_id', $user->id)
-                    ->whereNotIn('status', [
-                        'selesai',
-                        'cancelled',
-                        'expired'
-                    ])
+                    ->whereNotIn('status', ['selesai', 'cancelled', 'expired'])
                     ->latest()
                     ->get();
 
                 $historyOrders = Order::with([
                     'alamat',
-                    'orderItem',
-                    'orderItem.produk',
                     'orderItem.produk.fotoProduk'
                 ])
                     ->where('buyer_id', $user->id)
-                    ->whereIn('status', [
-                        'selesai',
-                        'cancelled',
-                        'expired'
-                    ])
+                    ->whereIn('status', ['selesai', 'cancelled', 'expired'])
                     ->latest()
                     ->get();
 
@@ -130,9 +160,14 @@ class DashboardController extends Controller
                     'activeOrders',
                     'historyOrders'
                 ));
-            } else {
-                return view('dashboard.index', compact('pageTitle'));
             }
+
+            /*
+        |--------------------------------------------------
+        | DEFAULT
+        |--------------------------------------------------
+        */
+            return view('dashboard.index', compact('pageTitle'));
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

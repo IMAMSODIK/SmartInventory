@@ -32,7 +32,7 @@
         </div>
 
         <div class="container-fluid">
-            @if (auth()->user()->role == 'admin')
+            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'pedagang')
                 <div class="row">
                     <div class="col-xl-3 col-sm-6">
                         <div class="card o-hidden small-widget">

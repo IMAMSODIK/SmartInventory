@@ -107,10 +107,10 @@ let tableDone = $('#dataTableDone').DataTable({
             render: (data, type, row, meta) => meta.row + 1
         },
         { data: 'order_id' },
-        { data: 'buyer_name' },
         ...(userRole === 'admin'
             ? [{ data: 'store_name' }]
             : []),
+        { data: 'buyer_name' },
         { data: 'item_summary' },
         {
             data: 'total',
