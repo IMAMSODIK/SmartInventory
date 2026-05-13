@@ -28,7 +28,7 @@ function generateActionButton(item) {
 
     return `<span class="text-success">Selesai</span>`;
 }
-
+let userRole = $('#user_role').val();
 let table = $('#dataTable').DataTable({
     processing: true,
     ajax: {
@@ -47,6 +47,9 @@ let table = $('#dataTable').DataTable({
             }
         },
         { data: 'order_id' },
+        ...(userRole === 'admin'
+            ? [{ data: 'store_name' }]
+            : []),
         { data: 'buyer_name' },
         { data: 'item_summary' },
         {
@@ -96,7 +99,7 @@ let tableDone = $('#dataTableDone').DataTable({
     },
     columnDefs: [
         { targets: '_all', className: 'align-middle' },
-        { targets: [0,3,4,5,6], className: 'text-center' }
+        { targets: [0, 3, 4, 5, 6], className: 'text-center' }
     ],
     columns: [
         {
@@ -105,6 +108,9 @@ let tableDone = $('#dataTableDone').DataTable({
         },
         { data: 'order_id' },
         { data: 'buyer_name' },
+        ...(userRole === 'admin'
+            ? [{ data: 'store_name' }]
+            : []),
         { data: 'item_summary' },
         {
             data: 'total',

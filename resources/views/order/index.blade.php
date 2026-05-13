@@ -4,6 +4,7 @@
 @endsection
 
 @section('content')
+<input type="hidden" id="user_role" value="{{ auth()->user()->role }}">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">

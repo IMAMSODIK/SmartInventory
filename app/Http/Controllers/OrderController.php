@@ -292,29 +292,53 @@ class OrderController extends Controller
 
             $user = auth()->user();
 
-            $query = Order::with(['buyer', 'orderItem.produk'])
-                ->whereHas('orderItem.produk', function ($q) use ($user) {
+            $query = Order::with([
+                'buyer',
+                'orderItem.produk.profileUsaha'
+            ]);
+
+            // 🔥 ROLE ADMIN: semua order
+            if ($user->role == 'admin') {
+
+                $query->whereHas('orderItem.produk');
+            } else {
+
+                // 🔥 PENJUAL: hanya toko sendiri
+                $query->whereHas('orderItem.produk', function ($q) use ($user) {
                     $q->where('profile_usaha_id', $user->profileUsaha->id);
                 });
+            }
 
             if ($request->status == 'done') {
-                $query->where('status', 'selesai');
+                $query->where('status', 'delivered');
             } else {
-                $query->whereIn('status', ['delivered', 'pending', 'paid', 'processing', 'shipping']);
+                $query->whereIn('status', ['pending', 'paid', 'processing', 'shipping', 'delivered']);
             }
 
             $orders = $query->latest()->get();
 
             $data = $orders->map(function ($order) use ($user) {
 
-                $items = $order->orderItem->filter(function ($item) use ($user) {
-                    return $item->produk->profile_usaha_id == $user->profileUsaha->id;
-                });
+                $items = $order->orderItem;
+
+                // 🔥 AMBIL TOKO (untuk admin bisa multi toko)
+                $storeNames = $items->map(function ($item) {
+                    return $item->produk->profileUsaha->store_name ?? '-';
+                })->unique()->values()->implode(', ');
+
+                // 🔥 FILTER PENJUAL (jika bukan admin)
+                if ($user->role != 'admin') {
+
+                    $items = $items->filter(function ($item) use ($user) {
+                        return $item->produk->profile_usaha_id == $user->profileUsaha->id;
+                    });
+                }
 
                 return [
                     'id' => $order->id,
                     'order_id' => $order->order_id,
                     'buyer_name' => $order->buyer->name,
+                    'store_name' => $storeNames, // 🔥 TAMBAHAN BARU
                     'item_summary' => $items->count() . ' item (' . $items->sum('qty') . ' pcs)',
                     'total' => $items->sum(fn($i) => $i->harga * $i->qty),
                     'status' => $order->status,
