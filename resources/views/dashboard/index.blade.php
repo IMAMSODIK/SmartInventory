@@ -470,13 +470,13 @@
                         <!-- ORDER AKTIF -->
                         <div class="tab-pane fade show active" id="active-order">
 
-                            @forelse($activeOrders ?? [] as $order)
+                            @forelse($activeOrders as $order)
                                 <div class="card border-0 shadow rounded-4 mb-4">
 
                                     <div class="card-body">
 
                                         <!-- HEADER -->
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="d-flex justify-content-between mb-3">
 
                                             <div>
 
@@ -502,34 +502,28 @@
                                         </p>
 
                                         <!-- LIST PRODUK -->
-                                        @foreach ($order->items ?? [] as $item)
+                                        @foreach ($order->items as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
 
-                                                if (
-                                                    $item->produk &&
-                                                    $item->produk->fotoProduk &&
-                                                    $item->produk->fotoProduk->count()
-                                                ) {
-                                                    $foto = $item->produk->fotoProduk->first();
-
-                                                    if ($foto) {
-                                                        $img = asset('storage/' . $foto->image);
-                                                    }
+                                                if ($item->produk && $item->produk->fotoProduk->count()) {
+                                                    $img = asset(
+                                                        'storage/' . $item->produk->fotoProduk->first()->image,
+                                                    );
                                                 }
 
                                                 $subtotal = $item->harga * $item->qty;
 
                                             @endphp
 
-                                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                            <div class="d-flex align-items-center border rounded-4 p-3 mb-3">
 
                                                 <!-- GAMBAR -->
-                                                <img src="{{ $img }}" width="80" height="80"
+                                                <img src="{{ $img }}" width="90" height="90"
                                                     class="rounded-3 object-fit-cover me-3">
 
-                                                <!-- DETAIL PRODUK -->
+                                                <!-- DETAIL -->
                                                 <div class="flex-grow-1">
 
                                                     <h6 class="fw-bold mb-1">
@@ -542,7 +536,7 @@
                                                     </small>
 
                                                     <small class="text-muted d-block">
-                                                        Jumlah:
+                                                        Qty:
                                                         {{ $item->qty }}
                                                     </small>
 
@@ -562,7 +556,7 @@
                                                         Total
                                                     </small>
 
-                                                    <h6 class="fw-bold text-success mb-0">
+                                                    <h6 class="fw-bold text-success">
                                                         Rp {{ number_format($subtotal, 0, ',', '.') }}
                                                     </h6>
 
@@ -571,8 +565,8 @@
                                             </div>
                                         @endforeach
 
-                                        <!-- TOTAL -->
-                                        <div class="mt-4">
+                                        <!-- TOTAL ORDER -->
+                                        <div class="border-top pt-3">
 
                                             <div class="d-flex justify-content-between mb-2">
 
@@ -586,13 +580,13 @@
 
                                             <div class="d-flex justify-content-between">
 
-                                                <h6 class="fw-bold">
-                                                    Total
-                                                </h6>
-
-                                                <h5 class="fw-bold text-success">
-                                                    Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                <h5 class="fw-bold">
+                                                    Total Bayar
                                                 </h5>
+
+                                                <h4 class="fw-bold text-success">
+                                                    Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                </h4>
 
                                             </div>
 
@@ -633,13 +627,13 @@
                         <!-- HISTORY -->
                         <div class="tab-pane fade" id="history-order">
 
-                            @forelse($historyOrders ?? [] as $order)
+                            @forelse($historyOrders as $order)
                                 <div class="card border-0 shadow rounded-4 mb-4">
 
                                     <div class="card-body">
 
                                         <!-- HEADER -->
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="d-flex justify-content-between mb-3">
 
                                             <div>
 
@@ -669,35 +663,29 @@
 
                                         </div>
 
-                                        <!-- LIST PRODUK -->
-                                        @foreach ($order->items ?? [] as $item)
+                                        <!-- LIST ITEM -->
+                                        @foreach ($order->items as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
 
-                                                if (
-                                                    $item->produk &&
-                                                    $item->produk->fotoProduk &&
-                                                    $item->produk->fotoProduk->count()
-                                                ) {
-                                                    $foto = $item->produk->fotoProduk->first();
-
-                                                    if ($foto) {
-                                                        $img = asset('storage/' . $foto->image);
-                                                    }
+                                                if ($item->produk && $item->produk->fotoProduk->count()) {
+                                                    $img = asset(
+                                                        'storage/' . $item->produk->fotoProduk->first()->image,
+                                                    );
                                                 }
 
                                                 $subtotal = $item->harga * $item->qty;
 
                                             @endphp
 
-                                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                            <div class="d-flex align-items-center border rounded-4 p-3 mb-3">
 
                                                 <!-- GAMBAR -->
-                                                <img src="{{ $img }}" width="80" height="80"
+                                                <img src="{{ $img }}" width="90" height="90"
                                                     class="rounded-3 object-fit-cover me-3">
 
-                                                <!-- DETAIL PRODUK -->
+                                                <!-- DETAIL -->
                                                 <div class="flex-grow-1">
 
                                                     <h6 class="fw-bold mb-1">
@@ -710,16 +698,9 @@
                                                     </small>
 
                                                     <small class="text-muted d-block">
-                                                        Jumlah:
+                                                        Qty:
                                                         {{ $item->qty }}
                                                     </small>
-
-                                                    @if ($item->note)
-                                                        <small class="text-muted d-block">
-                                                            Catatan:
-                                                            {{ $item->note }}
-                                                        </small>
-                                                    @endif
 
                                                 </div>
 
@@ -730,7 +711,7 @@
                                                         Total
                                                     </small>
 
-                                                    <h6 class="fw-bold text-success mb-0">
+                                                    <h6 class="fw-bold text-success">
                                                         Rp {{ number_format($subtotal, 0, ',', '.') }}
                                                     </h6>
 
@@ -740,15 +721,19 @@
                                         @endforeach
 
                                         <!-- TOTAL -->
-                                        <div class="d-flex justify-content-between mt-4">
+                                        <div class="border-top pt-3">
 
-                                            <h6 class="fw-bold">
-                                                Total
-                                            </h6>
+                                            <div class="d-flex justify-content-between">
 
-                                            <h5 class="fw-bold text-success">
-                                                Rp {{ number_format($order->total, 0, ',', '.') }}
-                                            </h5>
+                                                <h5 class="fw-bold">
+                                                    Total Bayar
+                                                </h5>
+
+                                                <h4 class="fw-bold text-success">
+                                                    Rp {{ number_format($order->total, 0, ',', '.') }}
+                                                </h4>
+
+                                            </div>
 
                                         </div>
 
