@@ -895,7 +895,7 @@
 
                 let html = '';
 
-                res.items.forEach(item => {
+                res.order_item.forEach(item => {
 
                     html += `
                 <div class="border rounded-4 p-3 mb-3">
