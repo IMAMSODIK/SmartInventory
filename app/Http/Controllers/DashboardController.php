@@ -103,7 +103,7 @@ class DashboardController extends Controller
                 ])
                     ->where('buyer_id', $user->id)
                     ->whereNotIn('status', [
-                        'delivered',
+                        'selesai',
                         'cancelled',
                         'expired'
                     ])
@@ -118,7 +118,7 @@ class DashboardController extends Controller
                 ])
                     ->where('buyer_id', $user->id)
                     ->whereIn('status', [
-                        'delivered',
+                        'selesai',
                         'cancelled',
                         'expired'
                     ])

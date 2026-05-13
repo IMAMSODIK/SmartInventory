@@ -27,7 +27,8 @@ return new class extends Migration
                 'complaint',
                 'challenge',
                 'deny',
-                'expired'
+                'expired',
+                'selesai'
             ])->default('pending');
 
             $table->decimal('shipping_cost', 12, 2);
