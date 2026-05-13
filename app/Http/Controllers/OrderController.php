@@ -166,9 +166,18 @@ class OrderController extends Controller
 
                 // 🔥 INFO DRIVER (ambil 1 saja)
                 if (!$driverInfo) {
+                    $driverRating = DB::table('rating_drivers')
+                        ->where('driver_id', $driver->id)
+                        ->avg('rating');
+
+                    $totalReview = DB::table('rating_drivers')
+                        ->where('driver_id', $driver->id)
+                        ->count();
+
                     $driverInfo = [
                         'name' => $driver->user->name ?? 'Driver',
-                        'rating' => $driver->rating,
+                        'rating' => round($driverRating ?? 0, 1),
+                        'total_review' => $totalReview,
                         'vehicle' => $driver->vehicle_type
                     ];
                 }

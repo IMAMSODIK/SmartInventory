@@ -28,16 +28,14 @@
         <nav class="flex-1 p-4 space-y-3">
             <a href="/dashboard" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 transition"><i
                     class="fas fa-home w-6 text-orange-500"></i><span>Beranda</span></a>
-            <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 transition"><i
-                    class="fas fa-history w-6 text-orange-500"></i><span>Pesanan</span></a>
         </nav>
         <div class="p-5 border-t bg-gray-50">
             <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-address-card mr-2"></i>Kontak Kami</h3>
             <div class="space-y-2 text-sm text-gray-600">
                 <p><i class="fab fa-whatsapp w-5 text-green-600"></i> +62 812-3456-7890</p>
                 <p><i class="fas fa-phone-alt w-5 text-blue-500"></i> (021) 1234 5678</p>
-                <p><i class="fas fa-envelope w-5 text-red-400"></i> halo@restoran.id</p>
-                <p><i class="fas fa-map-marker-alt w-5 text-gray-600"></i> Jl. Kuliner No. 88, Jakarta</p>
+                <p><i class="fas fa-envelope w-5 text-red-400"></i> halo@smartinventory.id</p>
+                <p><i class="fas fa-map-marker-alt w-5 text-gray-600"></i> Jl. Setia Budi No. 88, Medan</p>
             </div>
             <div class="flex mt-4 space-x-3">
                 <i class="fab fa-instagram text-2xl text-pink-500"></i>
@@ -631,7 +629,13 @@
                             html: `
                                 <div style="text-align:left">
                                     <p>🚚 <b>Driver:</b> ${driver.name}</p>
-                                    <p>⭐ Rating: ${driver.rating}</p>
+                                    <p class="mb-1">
+                                        ⭐ <b>Rating:</b> ${driver.rating} / 5
+                                    </p>
+
+                                    <p class="mb-1">
+                                        📝 <b>Total Review:</b> ${driver.total_review}
+                                    </p>
                                     <p>🚗 Kendaraan: ${driver.vehicle}</p>
 
                                     <hr>
@@ -654,7 +658,8 @@
                                 snap.pay(res.snap_token, {
                                     onSuccess: function() {
                                         snap.hide();
-                                        $('#loadingCheckout').addClass('hidden');
+                                        $('#loadingCheckout').addClass(
+                                            'hidden');
                                         showPaymentPopup('success');
 
                                         location.reload();
