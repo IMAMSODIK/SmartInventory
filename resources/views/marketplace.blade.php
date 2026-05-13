@@ -612,7 +612,6 @@
                 }));
 
                 $('#loadingCheckout').removeClass('hidden');
-                $('#modalCart').addClass('hidden');
 
                 $.ajax({
                     url: '/checkout',
@@ -658,6 +657,8 @@
                                         snap.hide();
                                         $('#loadingCheckout').addClass('hidden');
                                         showPaymentPopup('success');
+
+                                        location.reload();
 
                                         cart = [];
                                         updateCartBadge();
