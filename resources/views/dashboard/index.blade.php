@@ -514,7 +514,7 @@
                                             Detail Pesanan
                                         </h6>
 
-                                        @forelse($order->items as $item)
+                                        @forelse($order->orderItem as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
@@ -692,7 +692,7 @@
                                         </div>
 
                                         <!-- DETAIL ITEM -->
-                                        @forelse($order->items as $item)
+                                        @forelse($order->orderItem as $item)
                                             @php
 
                                                 $img = asset('storage/default.png');
