@@ -75,6 +75,22 @@ class ProdukController extends Controller
 
             $produk = $query->get();
 
+            $produk->transform(function ($item) {
+
+                $avgRating = DB::table('rating_produks')
+                    ->where('produk_id', $item->id)
+                    ->avg('rating');
+
+                $totalReview = DB::table('rating_produks')
+                    ->where('produk_id', $item->id)
+                    ->count();
+
+                $item->rating = round($avgRating ?? 0, 1);
+                $item->total_review = $totalReview;
+
+                return $item;
+            });
+
             return response()->json([
                 'check_profile' => $checkProfile,
                 'data' => $produk

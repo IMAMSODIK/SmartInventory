@@ -143,56 +143,56 @@ function generateMenuCard(menu) {
     }
 
     return `
-    <div class="col-xl-3 col-sm-6 produk-item" data-id="${menu.id}">
-        <div class="card">
-            <div class="product-box">
+<div class="col-xl-3 col-sm-6 produk-item" data-id="${menu.id}">
+    <div class="card">
+        <div class="product-box">
 
-                <div class="product-img">
-                    <div class="ribbon ribbon-success ribbon-right">
-                        ${menu.kategori?.nama_kategori ?? ''}
-                    </div>
-                    <img class="img-fluid" src="${img}">
-                    
-                    <div class="product-hover">
-                        <ul>
-                            <li class="btn-delete" data-id="${menu.id}">
-                                <button class="btn">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </li>
-                            <li class="edit-btn" data-id="${menu.id}">
-                                <button class="btn">
-                                    <i class="fa fa-pencil-square-o"></i>
-                                </button>
-                            </li>
-                        </ul>
+            <div class="product-img">
+                <div class="ribbon ribbon-success ribbon-right">
+                    ${menu.kategori?.nama_kategori ?? ''}
+                </div>
+                <img class="img-fluid" src="${img}">
+            </div>
+
+            <div class="product-details">
+
+                <h4>${menu.name}</h4>
+
+                <!-- ⭐ RATING -->
+                <div class="d-flex align-items-center gap-2 mb-1">
+
+                    <span class="text-warning fw-bold">
+                        ⭐ ${menu.rating ?? 0}
+                    </span>
+
+                    <span class="text-muted" style="font-size:12px">
+                        (${menu.total_review ?? 0} review)
+                    </span>
+
+                </div>
+
+                <p>${menu.deskripsi ?? ''}</p>
+
+                <div class="row">
+                    <div class="col-9">
+                        <div class="product-price">
+                            Rp ${formatRupiah(menu.price)}
+                        </div>
                     </div>
                 </div>
 
-                <div class="product-details">
-                    <h4>${menu.name}</h4>
-                    <p>${menu.deskripsi ?? ''}</p>
-
-                    <div class="row">
-                        <div class="col-9">
-                            <div class="product-price">
-                                Rp ${formatRupiah(menu.price)}
-                            </div>
-                        </div>
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        ${actionButton}
                     </div>
-
-                    <div class="row align-items-center">
-                        <div class="col-12">
-                            ${actionButton}
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
+
         </div>
     </div>
-    `;
+</div>
+`;
 }
 
 function showSkeleton() {
