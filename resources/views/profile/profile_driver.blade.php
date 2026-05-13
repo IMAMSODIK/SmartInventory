@@ -124,36 +124,6 @@
                                                             </div>
 
                                                         </div>
-
-                                                        <!-- PENDAPATAN -->
-                                                        <div class="col-md-3 mb-3">
-
-                                                            <div class="card border-0 shadow rounded-4">
-
-                                                                <div class="card-body text-center">
-
-                                                                    <h6 class="text-muted">
-                                                                        Pendapatan
-                                                                    </h6>
-
-                                                                    <h2 class="fw-bold text-success">
-
-                                                                        Rp {{ number_format($totalIncome, 0, ',', '.') }}
-
-                                                                    </h2>
-
-                                                                </div>
-
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                    <div class="row" style="margin-right: 10px">
-                                                        <label class="form-label">Total Delivery</label>
-                                                        <input class="form-control" type="text"
-                                                            value="{{ $data->driver->total_delivery ?? '' }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
