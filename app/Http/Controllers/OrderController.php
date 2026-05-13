@@ -434,7 +434,7 @@ class OrderController extends Controller
             ->findOrFail($id);
 
         return response()->json([
-            'items' => $order->items
+            'items' => $order->orderItem
         ]);
     }
 
