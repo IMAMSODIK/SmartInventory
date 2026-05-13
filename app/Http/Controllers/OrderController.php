@@ -205,12 +205,18 @@ class OrderController extends Controller
 
             // 🔥 TOTAL
             $total = round($grossAmount + $shippingCost);
-            dd($total . ' ' .  $shippingCost);
 
             $order->update([
                 'total' => $total,
                 'shipping_cost' => $shippingCost
             ]);
+
+            $itemDetails[] = [
+                'id' => 'ONGKIR',
+                'price' => (int) $shippingCost,
+                'quantity' => 1,
+                'name' => 'Ongkos Kirim'
+            ];
 
             // 🔥 MIDTRANS
             $params = [
