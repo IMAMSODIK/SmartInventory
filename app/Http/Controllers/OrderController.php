@@ -205,6 +205,7 @@ class OrderController extends Controller
 
             // 🔥 TOTAL
             $total = round($grossAmount + $shippingCost);
+            dd($total . ' ' .  $shippingCost);
 
             $order->update([
                 'total' => $total,
