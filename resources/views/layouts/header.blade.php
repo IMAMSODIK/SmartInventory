@@ -81,59 +81,10 @@
                         <label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="driver-status"></label>
                     </li>
                 @endif
-                <li class="onhover-dropdown">
-                    <svg>
-                        <use href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#star') }}"></use>
-                    </svg>
-                    <div class="onhover-show-div bookmark-flip">
-                        <div class="flip-card">
-                            <div class="flip-card-inner">
-                                <div class="front">
-                                    <h6 class="f-18 mb-0 dropdown-title">Bookmark</h6>
-                                    <ul class="bookmark-dropdown">
-                                        <li>
-                                            <div class="row">
-                                                <div class="col-4 text-center" onclick="location.href='/dashboard'">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon">
-                                                            <i class="fa fa-home text-secondary" aria-hidden="true"></i>
-                                                        </div>
-                                                        <span>Dashboard</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-center" onclick="location.href='/students'">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon">
-                                                            <i class="fa fa-user-graduate text-secondary"></i>
-                                                        </div><span>Students</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-center" onclick="location.href='/teacher'">
-                                                    <div class="bookmark-content">
-                                                        <div class="bookmark-icon">
-                                                            <i class="fa fa-users text-secondary"></i>
-                                                        </div>
-                                                        <span>Teachers</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="back">
-                                    <ul>
-                                        <li>
-                                            <div class="bookmark-dropdown flip-back-content">
-                                                <input type="text" placeholder="search...">
-                                            </div>
-                                        </li>
-                                        <li><a class="f-w-700 d-block flip-back" id="flip-back"
-                                                href="javascript:void(0)">Back</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <li>
+                    <a href="/marketplace" class="text-dark">
+                        <i class="fa fa-shopping-cart fs-5"></i>
+                    </a>
                 </li>
                 <li>
                     <div class="mode"><i class="moon" data-feather="moon"> </i></div>
@@ -438,8 +389,8 @@
                             <img class="b-r-10" src="{{ asset('storage') . '/' . auth()->user()->foto }}"
                                 style="width: 31px;" alt="Profile Picture">
                         @else
-                            <img class="b-r-10" src="{{ asset('own_assets/images/avatar.png') }}"
-                                style="width: 41px;" alt="Profile Picture">
+                            <img class="b-r-10" src="{{ asset('own_assets/images/avatar.png') }}" style="width: 41px;"
+                                alt="Profile Picture">
                         @endif
                         <div class="media-body d-xxl-block d-none box-col-none">
                             <div class="d-flex align-items-center gap-2"> <span>{{ auth()->user()->name }}</span><i

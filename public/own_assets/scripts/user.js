@@ -63,7 +63,7 @@ let table = $('#dataTable').DataTable({
                 case 'admin':
                     roleClass = 'bg-primary';
                     break;
-                case 'penjual':
+                case 'pembeli':
                     roleClass = 'bg-info';
                     break;
                 case 'pedagang':
@@ -130,10 +130,10 @@ let tableTrash = $('#dataTableTrash').DataTable({
                 case 'admin':
                     roleClass = 'bg-primary';
                     break;
-                case 'pedagang':
+                case 'pembeli':
                     roleClass = 'bg-info';
                     break;
-                case 'pembeli':
+                case 'pedagang':
                     roleClass = 'bg-warning';
                     break;
                 case 'kurir':

@@ -46,6 +46,7 @@
 @endsection
 
 @section('content')
+    <input type="hidden" name="user_role" id="user_role" value="{{ auth()->user()->role }}">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
@@ -95,9 +96,11 @@
                                 </div>
                                 <div class="col-md-6 text-sm-end">
                                     <div class="d-flex justify-content-end mb-2">
-                                        <button class="btn btn-primary" id="tambah-data" style="margin-right: 5px">
-                                            <i class="fa fa-plus-circle me-2"></i> Tambah Data
-                                        </button>
+                                        @if (auth()->user()->role == 'pedagang')
+                                            <button class="btn btn-primary" id="tambah-data" style="margin-right: 5px">
+                                                <i class="fa fa-plus-circle me-2"></i> Tambah Data
+                                            </button>
+                                        @endif
                                         <button class="btn btn-info refresh-data" data-table="data"
                                             style="margin-right: 5px">
                                             <i class="fa fa-refresh me-2" aria-hidden="true"></i> Refresh Data

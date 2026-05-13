@@ -589,7 +589,6 @@
     $('#driver-status').on('change', function() {
 
         let isOnline = $(this).is(':checked') ? 1 : 0;
-
         $.ajax({
             url: '/driver/toggle-status',
             type: 'POST',
@@ -614,14 +613,19 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Gagal',
-                        text: 'Gagal update status',
+                        text: res.message,
                     });
                 }
 
             },
 
-            error: function() {
-                toastr.error('Terjadi kesalahan');
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal',
+                        text: 'Terjadi kesalahan saat mengupdate status',
+                    });
                 $('#driver-status').prop('checked', !isOnline);
             }
         });

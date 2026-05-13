@@ -27,7 +27,7 @@
             <button id="closeSidebarBtn" class="text-gray-500 text-2xl"><i class="fas fa-times"></i></button>
         </div>
         <nav class="flex-1 p-4 space-y-3">
-            <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 transition"><i
+            <a href="/dashboard" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 transition"><i
                     class="fas fa-home w-6 text-orange-500"></i><span>Beranda</span></a>
             <a href="#" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-orange-50 transition"><i
                     class="fas fa-history w-6 text-orange-500"></i><span>Pesanan</span></a>
@@ -655,6 +655,7 @@
                                 snap.pay(res.snap_token, {
                                     onSuccess: function() {
                                         snap.hide();
+                                        $('#loadingCheckout').addClass('hidden');
                                         showPaymentPopup('success');
 
                                         cart = [];

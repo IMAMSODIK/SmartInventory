@@ -62,14 +62,10 @@ dirver di approve dari data driver
 
 
 
-
-
-
-
-setelah login semua masih mengarah ke marketplace
-role pembeli belum muncul di dashboard admin
-kurir bisa on off padahal belum approve admin
-tombol approve produk masih muncul di pedagang
+setelah login semua masih mengarah ke marketplace (done)
+role pembeli belum muncul di dashboard admin (done)
+kurir bisa on off padahal belum approve admin (done)
+tombol approve produk masih muncul di pedagang 
 tambahkan tombol ke marketplace untuk semua
 hitung ongkir masih muncul saat sudah bayar
 total bayar belum hitung ongkir

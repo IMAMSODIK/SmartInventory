@@ -50,10 +50,21 @@ class AuthController extends Controller
             Auth::login($user);
             $r->session()->regenerate();
 
+            $redirectUrl = '/dashboard';
+            if ($user->role === 'pedagang') {
+                $redirectUrl = '/daftar-produk';
+            } elseif ($user->role === 'pembeli') {
+                if ($user->alamat()->count() == 0) {
+                    $redirectUrl = '/profile';
+                } else {
+                    $redirectUrl = '/marketplace';
+                }
+            }
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Login successful',
-                'redirect' => redirect()->intended('/dashboard')->getTargetUrl()
+                'redirect' => redirect()->intended($redirectUrl)->getTargetUrl()
             ]);
         }
 

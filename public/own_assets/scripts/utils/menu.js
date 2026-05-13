@@ -120,19 +120,26 @@ function generateMenuCard(menu) {
     }
 
     let actionButton = '';
+    let userRole = $('#user_role').val();
 
-    if (menu.is_approved) {
-        actionButton = `
-        <button class="btn btn-sm btn-warning suspend-btn w-100" data-id="${menu.id}">
-            <i class="fa fa-ban"></i> Suspend
-        </button>
-    `;
-    } else {
-        actionButton = `
-        <button class="btn btn-sm btn-success approve-btn w-100" data-id="${menu.id}">
-            <i class="fa fa-check"></i> Approve
-        </button>
-    `;
+    if (userRole === 'admin') {
+
+        if (menu.is_approved) {
+
+            actionButton = `
+            <button class="btn btn-sm btn-warning suspend-btn w-100" data-id="${menu.id}">
+                <i class="fa fa-ban"></i> Suspend
+            </button>
+        `;
+
+        } else {
+
+            actionButton = `
+            <button class="btn btn-sm btn-success approve-btn w-100" data-id="${menu.id}">
+                <i class="fa fa-check"></i> Approve
+            </button>
+        `;
+        }
     }
 
     return `

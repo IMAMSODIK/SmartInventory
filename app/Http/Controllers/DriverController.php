@@ -93,7 +93,14 @@ class DriverController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'Data driver tidak ditemukan'
-                ], 404);
+                ]);
+            }
+
+            if (!$driver->status_approval) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data driver belum di approve admin'
+                ]);
             }
 
             $driver->update([
@@ -106,7 +113,6 @@ class DriverController extends Controller
                 'message' => $request->is_online ? 'Driver ONLINE' : 'Driver OFFLINE'
             ]);
         } catch (\Exception $e) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal update status',
