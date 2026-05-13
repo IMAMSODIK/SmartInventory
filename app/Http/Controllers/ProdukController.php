@@ -91,23 +91,44 @@ class ProdukController extends Controller
     public function loadData(Request $request)
     {
         try {
+
             $query = Produk::with(['fotoProduk', 'kategori'])
-                ->where('status', $request->status ?? 1)
                 ->where('is_approved', 1)
                 ->where('status', 1);
 
             if ($request->filled('kategori') && $request->kategori != '0') {
-                $menu = $query->where('kategori_id', $request->kategori)->get();
-            } else {
-                $menu = $query->get();
+
+                $query->where('kategori_id', $request->kategori);
             }
+
+            $menu = $query->get();
+
+            // 🔥 Tambahkan rating & total review
+            $menu->transform(function ($item) {
+
+                $avgRating = DB::table('rating_produks')
+                    ->where('produk_id', $item->id)
+                    ->avg('rating');
+
+                $totalReview = DB::table('rating_produks')
+                    ->where('produk_id', $item->id)
+                    ->count();
+
+                $item->rating = round($avgRating ?? 0, 1);
+
+                $item->total_review = $totalReview;
+
+                return $item;
+            });
 
             return response()->json([
                 'data' => $menu
             ]);
         } catch (\Exception $e) {
+
             return response()->json([
-                'message' => 'Gagal mengambil data'
+                'message' => 'Gagal mengambil data',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

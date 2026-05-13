@@ -334,18 +334,39 @@
                                 </div>
 
                                 <div class="p-4">
-                                    <h3 class="font-bold text-gray-800">${menu.name}</h3>
-                                    <p class="text-orange-600 font-semibold mt-1">
+
+                                    <h3 class="font-bold text-gray-800">
+                                        ${menu.name}
+                                    </h3>
+
+                                    <!-- ⭐ RATING -->
+                                    <div class="flex items-center gap-2 mt-1">
+
+                                        <span class="text-yellow-500 font-semibold">
+                                            ⭐ ${menu.rating ?? 0}
+                                        </span>
+
+                                        <span class="text-sm text-gray-500">
+                                            (${menu.total_review ?? 0} review)
+                                        </span>
+
+                                    </div>
+
+                                    <p class="text-orange-600 font-semibold mt-2">
                                         Rp ${formatRupiah(menu.price)}
                                     </p>
 
                                     <button class="btn-add mt-3 w-full bg-orange-100 hover:bg-orange-200 text-orange-700 py-2 rounded-xl"
                                         data-menu='${JSON.stringify(menu)}'>
+
                                         Pesan +
+
                                     </button>
+
                                 </div>
+
                             </div>
-                            `;
+                        `;
                     });
 
                     $('#menuList').html(html);
