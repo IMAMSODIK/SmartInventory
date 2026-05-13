@@ -621,20 +621,15 @@
                                         </div>
 
                                         <!-- AKSI -->
-                                        @if ($order->status == 'shipping')
+                                        @if ($order->status == 'delivered')
                                             <div class="mt-4">
 
-                                                <form method="POST" action="/buyer/order/{{ $order->id }}/received">
+                                                <button class="btn btn-success rounded-pill complete-order-btn mt-3"
+                                                    data-id="{{ $order->id }}">
 
-                                                    @csrf
+                                                    ✅ Selesaikan Pesanan
 
-                                                    <button class="btn btn-success rounded-pill">
-
-                                                        ✅ Sudah Diterima
-
-                                                    </button>
-
-                                                </form>
+                                                </button>
 
                                             </div>
                                         @endif
@@ -823,8 +818,179 @@
             </div>
         </div>
     @endif
+
+    <div class="modal fade" id="completeOrderModal" tabindex="-1">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content rounded-4 border-0">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Rating Pesanan
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="complete_order_id">
+
+                    <!-- RATING DRIVER -->
+                    <div class="mb-4">
+
+                        <label class="fw-bold mb-2">
+                            ⭐ Rating Driver
+                        </label>
+
+                        <select class="form-select" id="driver_rating">
+
+                            <option value="5">5 - Sangat Baik</option>
+                            <option value="4">4 - Baik</option>
+                            <option value="3">3 - Cukup</option>
+                            <option value="2">2 - Buruk</option>
+                            <option value="1">1 - Sangat Buruk</option>
+
+                        </select>
+
+                        <textarea class="form-control mt-2" id="driver_review" placeholder="Review driver"></textarea>
+
+                    </div>
+
+                    <!-- RATING PRODUK -->
+                    <div id="produk-rating-wrapper">
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button class="btn btn-success" id="submitCompleteOrder">
+
+                        Submit Penilaian
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 @endsection
 
 @section('own_script')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).on('click', '.complete-order-btn', function() {
+
+            let orderId = $(this).data('id');
+
+            $('#complete_order_id').val(orderId);
+
+            $.get('/buyer/order/' + orderId + '/detail', function(res) {
+
+                let html = '';
+
+                res.items.forEach(item => {
+
+                    html += `
+                <div class="border rounded-4 p-3 mb-3">
+
+                    <h6 class="fw-bold">
+                        ${item.nama_produk}
+                    </h6>
+
+                    <select class="form-select produk-rating mt-2"
+                            data-id="${item.id}">
+
+                        <option value="5">5 - Sangat Baik</option>
+                        <option value="4">4 - Baik</option>
+                        <option value="3">3 - Cukup</option>
+                        <option value="2">2 - Buruk</option>
+                        <option value="1">1 - Sangat Buruk</option>
+
+                    </select>
+
+                    <textarea class="form-control mt-2 produk-review"
+                              data-id="${item.id}"
+                              placeholder="Review produk"></textarea>
+
+                </div>
+            `;
+                });
+
+                $('#produk-rating-wrapper').html(html);
+
+                $('#completeOrderModal').modal('show');
+
+            });
+
+        });
+
+        $('#submitCompleteOrder').click(function() {
+
+            let orderId = $('#complete_order_id').val();
+
+            let produkRatings = [];
+
+            $('.produk-rating').each(function() {
+
+                let itemId = $(this).data('id');
+
+                let rating = $(this).val();
+
+                let review = $('.produk-review[data-id="' + itemId + '"]').val();
+
+                produkRatings.push({
+                    order_item_id: itemId,
+                    rating: rating,
+                    review: review
+                });
+
+            });
+
+            $.ajax({
+
+                url: '/buyer/order/' + orderId + '/complete',
+                method: 'POST',
+
+                data: {
+
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+
+                    driver_rating: $('#driver_rating').val(),
+
+                    driver_review: $('#driver_review').val(),
+
+                    produk_ratings: produkRatings
+
+                },
+
+                success: function(res) {
+
+                    toastr.success(res.message);
+
+                    $('#completeOrderModal').modal('hide');
+
+                    location.reload();
+
+                },
+
+                error: function(err) {
+
+                    toastr.error('Gagal submit rating');
+
+                }
+
+            });
+
+        });
+    </script>
 @endsection

@@ -78,6 +78,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/checkout', [OrderController::class, 'checkout']);
     Route::get('/order/status/{orderId}', [OrderController::class, 'checkStatus']);
+    Route::get('/buyer/order/{id}/complete', [OrderController::class, 'completeOrder']);
+    Route::post('/buyer/order/{id}/complete', [OrderController::class, 'completeOrder']);
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

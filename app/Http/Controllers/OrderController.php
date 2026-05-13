@@ -427,4 +427,91 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
+    public function orderDetail($id)
+    {
+        $order = Order::with('items')
+            ->findOrFail($id);
+
+        return response()->json([
+            'items' => $order->items
+        ]);
+    }
+
+    public function completeOrder(Request $request, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $order = Order::with('items')
+                ->findOrFail($id);
+
+            // UPDATE ORDER
+            $order->update([
+                'status' => 'delivered',
+                'is_reviewed' => true
+            ]);
+
+            // DRIVER
+            $driverId = $order->items
+                ->first()
+                ->driver_id;
+
+            DB::table('rating_drivers')->insert([
+
+                'order_id' => $order->id,
+
+                'driver_id' => $driverId,
+
+                'buyer_id' => auth()->id(),
+
+                'rating' => $request->driver_rating,
+
+                'review' => $request->driver_review,
+
+                'created_at' => now(),
+
+                'updated_at' => now()
+
+            ]);
+
+            // PRODUK
+            foreach ($request->produk_ratings as $item) {
+
+                $orderItem = OrderItem::find($item['order_item_id']);
+
+                DB::table('rating_produks')->insert([
+
+                    'order_item_id' => $orderItem->id,
+
+                    'produk_id' => $orderItem->produk_id,
+
+                    'buyer_id' => auth()->id(),
+
+                    'rating' => $item['rating'],
+
+                    'review' => $item['review'],
+
+                    'created_at' => now(),
+
+                    'updated_at' => now()
+
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Pesanan selesai & rating berhasil dikirim'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

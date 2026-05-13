@@ -36,6 +36,7 @@ return new class extends Migration
             $table->string('payment_type')->nullable();
             $table->string('transaction_id')->nullable();
             $table->string('fraud_status')->nullable();
+            $table->boolean('is_reviewed')->default(false);
             $table->timestamps();
         });
     }
