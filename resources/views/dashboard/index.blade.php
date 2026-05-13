@@ -348,13 +348,43 @@
 
             @if (auth()->user()->role == 'kurir')
                 <div class="row">
-                    <div class="col-xl-4 col-sm-12">
+                    <div class="col-xl-2 col-6">
                         <div class="card o-hidden small-widget">
                             <div class="card-body total-project border-b-primary border-2"><span
                                     class="f-light f-w-500 f-14">Total Order</span>
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">{{ $totalOrderSelesai ?? 0 }}</h2><span class="f-12 f-w-400">(Order Selesai)</span>
+                                    </div>
+                                    <div class="product-sub bg-primary-light">
+                                        <svg class="invoice-icon">
+                                            <use
+                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#color-swatch') }}">
+                                            </use>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-6">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-project border-b-primary border-2"><span
+                                    class="f-light f-w-500 f-14">Total Pendapatan</span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h2>
                                     </div>
                                     <div class="product-sub bg-primary-light">
                                         <svg class="invoice-icon">
