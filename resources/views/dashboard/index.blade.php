@@ -356,13 +356,6 @@
                                     <div class="project-counter">
                                         <h2 class="f-w-600">{{ $totalOrderSelesai ?? 0 }}</h2><span class="f-12 f-w-400">(Order Selesai)</span>
                                     </div>
-                                    <div class="product-sub bg-primary-light">
-                                        <svg class="invoice-icon">
-                                            <use
-                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#color-swatch') }}">
-                                            </use>
-                                        </svg>
-                                    </div>
                                 </div>
                                 <ul class="bubbles">
                                     <li class="bubble"></li>
@@ -385,13 +378,6 @@
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h2>
-                                    </div>
-                                    <div class="product-sub bg-primary-light">
-                                        <svg class="invoice-icon">
-                                            <use
-                                                href="{{ asset('dashboard_assets/assets/svg/icon-sprite.svg#color-swatch') }}">
-                                            </use>
-                                        </svg>
                                     </div>
                                 </div>
                                 <ul class="bubbles">
