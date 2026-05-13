@@ -1,6 +1,8 @@
 @extends('layouts.template')
 
 @section('own_style')
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 @endsection
 
 @section('content')
@@ -884,6 +886,7 @@
 
 @section('own_script')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).on('click', '.complete-order-btn', function() {
 
