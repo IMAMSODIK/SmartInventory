@@ -34,15 +34,15 @@ class DashboardController extends Controller
                         'total' => Order::whereDate('created_at', $today)->count(),
                         'pending' => Order::whereDate('created_at', $today)->where('status', 'pending')->count(),
                         'processing' => Order::whereDate('created_at', $today)->whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => Order::whereDate('created_at', $today)->where('status', 'shipping')->count(),
-                        'delivered' => Order::whereDate('created_at', $today)->where('status', 'delivered')->count(),
+                        'shipping' => Order::whereDate('created_at', $today)->where('status', 'paid')->count(),
+                        'delivered' => Order::whereDate('created_at', $today)->where('status', 'selesai')->count(),
                     ],
                     'all' => [
                         'total' => Order::count(),
                         'pending' => Order::where('status', 'pending')->count(),
                         'processing' => Order::whereIn('status', ['paid', 'processing'])->count(),
-                        'shipping' => Order::where('status', 'shipping')->count(),
-                        'delivered' => Order::where('status', 'delivered')->count(),
+                        'shipping' => Order::where('status', 'paid')->count(),
+                        'delivered' => Order::where('status', 'selesai')->count(),
                     ],
                 ];
                 $revenue = [
